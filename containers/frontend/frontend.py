@@ -5,7 +5,8 @@ import waitress
 import os
 
 app = flask.Flask(__name__)
-app.secret_key = os.urandom(24)
+try: app.secret_key = os.environ['session_secret']
+except: raise UnboundLocalError('Missing values: session_secret')
 
 @app.route('/')
 def dashboard():

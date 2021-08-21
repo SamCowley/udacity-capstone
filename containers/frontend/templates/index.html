@@ -1,0 +1,56 @@
+{% set is_dashboard = True %}
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block subsection_title %}{% endblock %}
+{% block subnavbar_extra %}
+    {% if logged_in %}
+        <li><button onclick="new_report()">Create</button></li>
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}<script>{% include 'index.js' %}</script>{% endblock %}
+
+{% block content %}
+    {% if not logged_in %}
+        <div class="reports_list">
+            {% for report in reports %}
+                <div class="report_item">
+                    <a href="/{{ report['id'] }}">{{ report['name'] }}</a>
+                    <button class="update_report" onclick="update_report({{ report['id'] }})">Update</button>
+                    <button class="delete_report" onclick="delete_report({{ report['id'] }})">Delete</button>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <h1>No Reports Available</h1>
+    {% endif %}
+{% endblock %}
+
+{% block extra %}
+    <div class="popup">
+        <form id="new-report">
+            <input type="text" placeholder="Name" />
+            <input type="submit" value="Create" />
+        </form>
+        <button onclick="close_popup()">Cancel</button>
+    </div>
+    
+    <div class="popup">
+        <form id="update-report">
+            <input type="text" value="" style="display: none" />
+            <input type="text" placeholder="Name" />
+            <input type="submit" value="Update" />
+        </form>
+        <button onclick="close_popup()">Cancel</button>
+    </div>
+    
+    <div class="popup">
+        <form id="delete-report" action="/submit">
+            <input type="text" value="" style="display: none" />
+            <input type="submit" value="Delete" />
+        </form>
+        <button onclick="close_popup()">Cancel</button>
+    </div>
+{% endblock %}

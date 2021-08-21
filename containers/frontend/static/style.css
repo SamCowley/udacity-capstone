@@ -1,0 +1,122 @@
+/* Variables */
+:root {
+    --nav-bg: #333333;
+    --nav-fg: white;
+    --nav-hov-bg: #999999;
+    --nav-hov-fg: white;
+    --nav-sel-bg: #4281A4;
+    --nav-sel-fg: white;
+}
+
+/* Base */
+body {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+}
+
+.inner_content {
+    margin: 10px;
+    padding: 2px;
+    border: 2px solid black;
+}
+
+/* navbar */
+.navbar {
+    background-color: var(--nav-bg);
+    width: 100%;
+}
+
+.navbar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.navbar ul li {
+    float: left;
+}
+
+.navbar ul li a {
+    display: block;
+    color: var(--nav-fg);
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.navbar ul li a:hover {
+    background-color: var(--nav-hov-bg);
+    color: var(--nav-hov-fg);
+}
+
+.navbar ul li a.selected {
+    background-color: var(--nav-sel-bg);
+    color: var(--nav-sel-fg);
+}
+
+/* subnavbar */
+.subnavbar {
+    background-color: var(--nav-sel-bg);
+    color: var(--nav-sel-fg);
+}
+
+.subnavbar_extra {
+    overflow: auto;
+    width: 100%;
+}
+
+.subnavbar_extra ul {
+    list-style-type: none;
+    margin: 0;
+}
+
+.subnavbar_extra ul li {
+    float: right;
+}
+
+.subnavbar_extra ul li input {
+    text-align: center;
+}
+
+/* Report List */
+.reports_list {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.reports_list a {
+    padding: 2px;
+    text-decoration: none;
+    background-color: inherit;
+}
+
+.reports_list button {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+/* Popups */
+.popup {
+    display: none;
+    width: 30%;
+    margin: auto;
+    border: 3px solid black;
+    padding: 10px;
+    z-index: 9;
+}
+
+.popup input,
+.popup button {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.popup form {
+    width: 100%;
+    height: 100%;
+}

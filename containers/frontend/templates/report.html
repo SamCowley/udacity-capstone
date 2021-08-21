@@ -1,0 +1,12 @@
+{% set dashboard = True %}
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+   <ul class="dashboard">
+       {% for sheet in sheets %}
+           <li><a id="{{ sheet['id'] }}" href="/{{ sheet['id'] }}">{{ sheet['name'] }}</a></li>
+       {% endfor %}
+   </ul>
+{% endblock %}

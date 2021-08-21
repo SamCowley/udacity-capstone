@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+  labels:
+    service: auth
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      service: auth
+  template:
+    metadata:
+      labels:
+        service: auth
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: udacity-capstone-auth
+        imagePulLPolicy: Always
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "64m"
+          limits:
+            memory: "1024Mi"
+            cpu: "512m"
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: POSTGRES_PASSWORD
+        volumeMounts:
+        - name: aws-secret
+          mountPath: "/root/.aws"
+          readOnly: true
+      volumes:
+      - name: aws-secret
+        secret:
+          secretName: aws-secret

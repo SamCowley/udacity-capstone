@@ -1,0 +1,30 @@
+<!doctype html>
+<title>Expense Report - {% block title %}{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<nav class="navbar">
+    <ul>
+        <li><a {% if is_dashboard %} class="selected" {% endif %} href="/">Dashboard</a></li>
+        {% block subsection_title %}{% endblock %}
+        {% if logged_in %}
+            <li style="float:right"><img src="{{ avatar }}"></li>
+            <li style="float:right">{{ username }}</li>
+            <li style="float:right"><a href="api/v0/auth/logout">Logout</a></li>
+        {% else %}
+            <li style="float:right"><a href="api/v0/auth/login">Login</a></li>
+        {% endif %}
+    </ul>
+</nav>
+
+{% block scripts %}{% endblock %}
+
+<nav class="subnavbar">
+    <div class="subnavbar_extra"><ul>{% block subnavbar_extra %}{% endblock %}</ul></div>
+</nav>
+
+<section class="content">
+    <div class="inner_content">
+    {% block content %}{% endblock %}
+    </div>
+</section>
+
+{% block extra %}{% endblock %}

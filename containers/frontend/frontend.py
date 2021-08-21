@@ -13,11 +13,13 @@ def dashboard():
     logged_in = 'profile' in flask.session
     reports = ['a']
     url = flask.request.url_root + "/api/v0/report/list"
-    resp = requests.get(url = url)
     data = ''
-    if resp.ok:
-        data = resp.json()
-        print(data)
+    try:
+        resp = requests.get(url = url)
+        if resp.ok:
+            data = resp.json()
+    except:
+        pass
     
     return flask.render_template('index.html', logged_in=logged_in, reports=reports)
 

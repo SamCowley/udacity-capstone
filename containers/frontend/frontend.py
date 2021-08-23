@@ -14,15 +14,15 @@ except: raise UnboundLocalError('Missing values: session_secret')
 def dashboard():
     print("Requesting dashboard")
     logged_in = 'profile' in flask.session
-    reports = ['a']
-    url = flask.request.url_root + "/api/v0/report/list"
     data = ''
-    try:
-        resp = requests.get(url = url)
-        if resp.ok:
-            data = resp.json()
-    except:
-        pass
+    if logged_in:
+        url = flask.request.url_root + "/api/v0/report/list"
+        try:
+            resp = requests.get(url = url)
+            if resp.ok:
+                data = resp.json()
+        except:
+            pass
     
     print("Returning dashboard rendering")
     return flask.render_template('index.html', logged_in=logged_in, reports=reports)

@@ -50,11 +50,12 @@ def get_all_reports():
 def delete_report():
     uid = flask.session['profile']['user_id']
     rid = flask.request.args.get('rid')
+    eid = flask.request.args.get('eid')
 
     if not validate_arguments((rid, 'int', False)):
         return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400)
 
-    expenses.delete_report(uid, rid)
+    expenses.delete_report(uid, rid, eid)
     return flask.Response(status=200)
 
 @app.route('/update', methods=['POST'])

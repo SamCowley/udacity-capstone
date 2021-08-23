@@ -10,6 +10,7 @@ except: raise UnboundLocalError('Missing values: session_secret')
 
 @app.route('/')
 def dashboard():
+    print("Requesting dashboard")
     logged_in = 'profile' in flask.session
     reports = ['a']
     url = flask.request.url_root + "/api/v0/report/list"
@@ -21,11 +22,14 @@ def dashboard():
     except:
         pass
     
+    print("Returning dashboard rendering")
     return flask.render_template('index.html', logged_in=logged_in, reports=reports)
 
 @app.route('/<report_id>')
 def expenses(rid):
+    print("Requesting report: " + rid)
     logged_in = 'profile' in flask.session
+    print("Rendering report: " + rid)
     return flask.render_template('report.html', logged_in=logged_in)
 
 waitress.serve(app, host='0.0.0.0', port=8080)

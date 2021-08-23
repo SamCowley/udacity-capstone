@@ -5,7 +5,7 @@ metadata:
   labels:
     service: backend
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       service: backend
@@ -17,7 +17,8 @@ spec:
       restartPolicy: Always
       containers:
       - name: udacity-capstone-backend
-        imagePulLPolicy: Always
+        image: samcowley/udacity-capstone-backend
+        imagePullPolicy: Always
         resources:
           requests:
             memory: "64Mi"

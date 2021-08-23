@@ -11,10 +11,12 @@ auth = auth_service.Auth0(app)
 
 @app.route('/login')
 def login():
+    print("Requesting login")
     return auth.login()
 
-@app.route('/api/v0/auth/callback')
+@app.route('/callback')
 def callback():
+    print("Requesting callback")
     userinfo = auth.callback()
     flask.session['profile'] = {
         'user_id': userinfo['sub'],
@@ -25,10 +27,12 @@ def callback():
 
 @app.route('/logout')
 def logout():
+    print("Requesting logout")
     flask.session.clear()
 
 @app.route('/token', methods=["POST"])
 def token():
+    print("Requesting token")
     data = flask.request.get_json()
     username = data['username']
     password = data['password']
@@ -45,4 +49,4 @@ def token():
     token = flask.session
     return flask.Response(flask.json.jsonify(token), status=200)
 
-waitress.serve(app, host='127.0.0.1', port=8080)
+waitress.serve(app, host='0.0.0.0', port=8080)

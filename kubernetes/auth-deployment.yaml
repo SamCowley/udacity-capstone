@@ -5,7 +5,7 @@ metadata:
   labels:
     service: auth
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       service: auth
@@ -17,7 +17,8 @@ spec:
       restartPolicy: Always
       containers:
       - name: udacity-capstone-auth
-        imagePulLPolicy: Always
+        image: samcowley/udacity-capstone-auth
+        imagePullPolicy: Always
         resources:
           requests:
             memory: "64Mi"
@@ -31,6 +32,16 @@ spec:
             secretKeyRef:
               name: secrets
               key: POSTGRES_PASSWORD
+        - name: session_secret 
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: session_secret
+        - name: auth0_client_secret
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: auth0_client_secret
         volumeMounts:
         - name: aws-secret
           mountPath: "/root/.aws"

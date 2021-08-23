@@ -5,7 +5,7 @@ metadata:
   labels:
     service: frontend
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       service: frontend
@@ -17,7 +17,8 @@ spec:
       restartPolicy: Always
       containers:
       - name: udacity-capstone-frontend
-        imagePulLPolicy: Always
+        image: samcowley/udacity-capstone-frontend
+        imagePullPolicy: Always
         resources:
           requests:
             memory: "64Mi"
@@ -25,12 +26,19 @@ spec:
           limits:
             memory: "1024Mi"
             cpu: "512m"
+        ports:
+        - containerPort: 8080
         env:
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               name: secrets
               key: POSTGRES_PASSWORD
+        - name: session_secret 
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: session_secret
         volumeMounts:
         - name: aws-secret
           mountPath: "/root/.aws"

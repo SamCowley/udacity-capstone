@@ -1,5 +1,4 @@
 import psycopg2
-import configparser
 import boto3
 
 class ExpenseItem:
@@ -26,39 +25,26 @@ class Expenses:
         self.s3 = boto3.client('s3')
 
     def init_config(self):
-        missing_values = []
-        
-        # Get all configuration
-        self.config = configparser.ConfigParser()
-        self.config.read('config.ini')
+        try: self.s3_bucket = os.environ['s3_bucket']
+        except: raise UnboundLocalError('s3_bucket')
 
-        # Add auth0 if it doesn't exist
-        if 'expenses' not in self.config: self.config['expenses'] = {}
+        try: self.s3_timeout = os.environ['s3_timeout']
+        except: raise UnboundLocalError('s3_timeout')
 
-        # Retrieve all values
-        self.s3_bucket = self.config['expenses'].get('s3_bucket')
-        if self.s3_bucket in [None, '']:
-            missing_values.append('s3_bucket')
+        try: self.rds_endpoint = os.environ['rds_endpoint']
+        except: raise UnboundLocalError('rds_endpoint')
 
-        self.s3_timeout = self.config['expenses'].get('s3_timeout')
-        if self.s3_timeout in [None, '']:
-            missing_values.append('s3_timeout')
-            self.s3_timeout = 3600
+        try: self.rds_port = os.environ['rds_port']
+        except: raise UnboundLocalError('rds_port')
 
-        self.rds_endpoint = ''
-        self.rds_port = ''
-        self.rds_user = ''
-        self.rds_region = ''
+        try: self.rds_user = os.environ['rds_user']
+        except: raise UnboundLocalError('rds_user')
 
-        # Add missing fields and raise an exception
-        if len(missing_values) != 0:
-            self.config['expenses']['aws_secret'] = None
-            self.config['expenses']['s3_bucket'] = str(self.s3_bucket)
-            self.config['expenses']['s3_timeout'] = str(self.s3_timeout)
-            self.config['expenses']['rds_database'] = str(self.s3_timeout)
-            with open('config.ini', 'w') as configfile:
-                self.config.write(configfile)
-            raise UnboundLocalError('Missing values: ' + str(missing_values))
+        try: self.rds_user = os.environ['rds_pass']
+        except: raise UnboundLocalError('rds_pass')
+
+        try: self.rds_region = os.environ['rds_region']
+        except: raise UnboundLocalError('rds_region')
         
     def init_db(self):
        def table_exists(name):

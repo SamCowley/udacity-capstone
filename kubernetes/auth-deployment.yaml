@@ -39,11 +39,31 @@ spec:
             secretKeyRef:
               name: secrets
               key: session_secret
+        - name: auth0_client_id
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: auth0_client_id
         - name: auth0_client_secret
           valueFrom:
             secretKeyRef:
               name: secrets
               key: auth0_client_secret
+        - name: auth0_api_base_url
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: auth0_api_base_url
+        - name: auth0_access_token_url
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: auth0_access_token_url
+        - name: auth0_authorize_url
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: auth0_authorize_url
         volumeMounts:
         - name: aws-secret
           mountPath: "/root/.aws"

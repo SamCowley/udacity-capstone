@@ -1,5 +1,4 @@
 #!/bin/python3
-import configparser
 import authlib.integrations.flask_client as auth
 import requests
 import flask
@@ -25,47 +24,20 @@ class Auth0:
         )
 
     def init_config(self):
-        missing_values = []
+        try: self.client_id = os.environ['auth0_client_id']
+        except: raise UnboundLocalError('auth0_client_id')
 
-        # Get all configuration
-        self.config = configparser.ConfigParser()
-        self.config.read('config.ini')
+        try: self.client_secret = os.environ['auth0_client_secret']
+        except: raise UnboundLocalError('auth0_client_secret')
 
-        # Add auth0 if it doesn't exist
-        if 'auth0' not in self.config: self.config['auth0'] = {}
+        try: self.api_base_url = os.environ['auth0_api_base_url']
+        except: raise UnboundLocalError('auth0_api_base_url')
 
-        # Retrieve all values
-        self.client_id = self.config['auth0'].get('client_id')
-        if self.client_id in [None, '']: missing_values.append('client_id')
+        try: self.api_base_url = os.environ['auth0_access_token_url']
+        except: raise UnboundLocalError('auth0_access_token_url')
 
-        try:
-            self.client_secret = os.environ['auth0_client_secret']
-        except:
-            self.client_secret = ''
-            missing_values.append('auth0_client_secret')
-
-        self.api_base_url = self.config['auth0'].get('api_base_url')
-        if self.api_base_url in [None, '']:
-            missing_values.append('api_base_url')
-
-        self.access_token_url = self.config['auth0'].get('access_token_url')
-        if self.access_token_url in [None, '']:
-            missing_values.append('access_token_url')
-
-        self.authorize_url = self.config['auth0'].get('authorize_url')
-        if self.authorize_url in [None, '']:
-            missing_values.append('authorize_url')
-
-        # Add missing fields and raise an exception
-        if len(missing_values) != 0:
-            self.config['auth0']['client_id'] = str(self.client_id)
-            self.config['auth0']['api_base_url'] = str(self.api_base_url)
-            self.config['auth0']['access_token_url'] = str(self.access_token_url)
-            self.config['auth0']['authorize_url'] = str(self.authorize_url)
-            with open('config.ini', 'w') as configfile:
-                self.config.write(configfile)
-            raise UnboundLocalError('Missing values: ' + str(missing_values))
-
+        try: self.authorize_url = os.environ['auth0_authorize_url']
+        except: raise UnboundLocalError('auth0_authorize_url')
 
     def login(self):
         callback_url=flask.request.url_root + "api/v0/auth/callback"

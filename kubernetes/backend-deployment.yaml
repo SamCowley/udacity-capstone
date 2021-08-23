@@ -27,11 +27,31 @@ spec:
             memory: "1024Mi"
             cpu: "512m"
         env:
-        - name: POSTGRES_PASSWORD
+        - name: rds_user
           valueFrom:
             secretKeyRef:
               name: secrets
-              key: POSTGRES_PASSWORD
+              key: rds_user
+        - name: rds_pass
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: rds_pass
+        - name: rds_region
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: rds_region
+        - name: s3_bucket
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: s3_bucket
+        - name: s3_timeout
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: s3_timeout
         volumeMounts:
         - name: aws-secret
           mountPath: "/root/.aws"

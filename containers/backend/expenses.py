@@ -2,8 +2,10 @@ import os
 import expenses_service
 from functools import wraps
 import flask
+from flask_cors import CORS
 
 app = flask.Flask(__name__)
+CORS(app)
 try: app.secret_key = os.environ['session_secret']
 except: raise UnboundLocalError('Missing values: session_secret')
 expenses = expenses_service.Expenses()

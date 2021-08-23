@@ -4,7 +4,7 @@ if grep -q '&all' <<< "${TRAVIS_COMMIT_MESSAGE}"; then
 else 
     COMMIT_RANGE="$(echo ${TRAVIS_COMMIT_RANGE} | cut -d '.' -f1,4 --output-delimiter '..')"
     CHANGED_FILES="$(git diff --name-only ${COMMIT_RANGE} --)"
-    CHANGED_DIRECTORIES="$(echo "$CHANGED_FILES" | cut -d'/' -f-2 | sort | uniq)"
+    CHANGED_DIRECTORIES="$(echo "$CHANGED_FILES" | cut -d'/' -f-2 | sort | uniq | grep containers)"
 fi
 
 echo "==================================================================================="

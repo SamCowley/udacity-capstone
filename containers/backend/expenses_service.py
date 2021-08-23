@@ -65,23 +65,23 @@ class Expenses:
            self.rds_cur.execute("SHOW TABLES LIKE %s;", (name,))
            return len(self.rds_cur.fetchall()) > 0
 
-        aws = boto3.Session(profile_name='default')
+       aws = boto3.Session(profile_name='default')
 
-        rds = aws.client('rds')
-        self.rds_token = client.generate_db_auth_token(
-            DBHostname=self.rds_endpoint,
-            Port=self.rds_port,
-            DBUsername=self.rds_user,
-            Region=self.rds_region)
+       rds = aws.client('rds')
+       self.rds_token = client.generate_db_auth_token(
+           DBHostname=self.rds_endpoint,
+           Port=self.rds_port,
+           DBUsername=self.rds_user,
+           Region=self.rds_region)
 
-        self.rds_conn = psycopg2.connect(
-            host=self.rds_endpoint,
-            port=self.rds_port,
-            database=self.rds_dbname,
-            user=self.rds_user,
-            password=self.rds_token)
+       self.rds_conn = psycopg2.connect(
+           host=self.rds_endpoint,
+           port=self.rds_port,
+           database=self.rds_dbname,
+           user=self.rds_user,
+           password=self.rds_token)
 
-        self.rds_cur = self.rds_conn.cursor()
+       self.rds_cur = self.rds_conn.cursor()
 
        # Create Report Table
        if table_exists(self.rds_report_table):

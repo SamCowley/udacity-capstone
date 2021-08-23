@@ -19,12 +19,20 @@ spec:
       - name: udacity-capstone-proxy
         image: samcowley/udacity-capstone-proxy
         imagePullPolicy: Always
-        ports:
-        - containerPort: 8080
         resources:
           requests:
-            memory: "32Mi"
-            cpu: "10m"
+            memory: "64Mi"
+            cpu: "64m"
           limits:
-            memory: "512Mi"
-            cpu: "100m"
+            memory: "1024Mi"
+            cpu: "512m"
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: aws-secret
+          mountPath: "/root/.aws"
+          readOnly: true
+      volumes:
+      - name: aws-secret
+        secret:
+          secretName: aws-secret

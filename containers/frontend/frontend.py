@@ -1,10 +1,12 @@
 #!/bin/python3
 import flask
+from flask_cors import CORS
 import requests
 import waitress
 import os
 
 app = flask.Flask(__name__)
+CORS(app)
 try: app.secret_key = os.environ['session_secret']
 except: raise UnboundLocalError('Missing values: session_secret')
 

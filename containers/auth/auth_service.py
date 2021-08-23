@@ -33,7 +33,7 @@ class Auth0:
         try: self.api_base_url = os.environ['auth0_api_base_url']
         except: raise UnboundLocalError('auth0_api_base_url')
 
-        try: self.api_base_url = os.environ['auth0_access_token_url']
+        try: self.access_token_url = os.environ['auth0_access_token_url']
         except: raise UnboundLocalError('auth0_access_token_url')
 
         try: self.authorize_url = os.environ['auth0_authorize_url']

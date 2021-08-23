@@ -13,11 +13,11 @@
 {% block scripts %}<script>{% include 'index.js' %}</script>{% endblock %}
 
 {% block content %}
-    {% if not logged_in %}
+    {% if logged_in %}
         <div class="reports_list">
             {% for report in reports %}
                 <div class="report_item">
-                    <a href="/{{ report['id'] }}">{{ report['name'] }}</a>
+                    <a href="/report/{{ report['id'] }}">{{ report['name'] }}</a>
                     <button class="update_report" onclick="update_report({{ report['id'] }})">Update</button>
                     <button class="delete_report" onclick="delete_report({{ report['id'] }})">Delete</button>
                 </div>

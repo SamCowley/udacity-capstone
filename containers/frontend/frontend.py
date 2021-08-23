@@ -27,11 +27,11 @@ def dashboard():
     print("Returning dashboard rendering")
     return flask.render_template('index.html', logged_in=logged_in, reports=reports)
 
-@app.route('/<report_id>')
-def expenses(rid):
-    print("Requesting report: " + rid)
+@app.route('/report/<report_id>')
+def expenses(report_id):
+    print("Requesting report: " + report_id)
     logged_in = 'profile' in flask.session
-    print("Rendering report: " + rid)
+    print("Rendering report: " + report_id)
     return flask.render_template('report.html', logged_in=logged_in)
 
 waitress.serve(app, host='0.0.0.0', port=8080, threads=18)

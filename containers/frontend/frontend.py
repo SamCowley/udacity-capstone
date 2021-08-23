@@ -34,4 +34,4 @@ def expenses(rid):
     print("Rendering report: " + rid)
     return flask.render_template('report.html', logged_in=logged_in)
 
-waitress.serve(app, host='0.0.0.0', port=8080)
+waitress.serve(app, host='0.0.0.0', port=8080, threads=18)

@@ -51,4 +51,4 @@ def token():
     token = flask.session
     return flask.Response(flask.json.jsonify(token), status=200)
 
-waitress.serve(app, host='0.0.0.0', port=8080)
+waitress.serve(app, host='0.0.0.0', port=8080, threads=18)

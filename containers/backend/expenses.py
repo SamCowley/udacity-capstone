@@ -65,7 +65,7 @@ def update_report():
     name = flask.request.args.get('name')
 
     if not validate_arguments((rid, 'int', False), (name, 'str', False)):
-        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400)
+        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400))
 
     expenses.update_report(uid, rid, name)
     return flask.Response(status=200)
@@ -78,7 +78,7 @@ def create_report():
     name = flask.request.args.get('name')
 
     if not validate_arguments((rid, 'int', False), (name, 'str', False)):
-        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400)
+        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400))
 
     expenses.add_report(uid, rid, name)
     return flask.Response(status=201)
@@ -90,7 +90,7 @@ def get_report_expenses(rid):
     rid = flask.request.args.get('rid')
 
     if not validate_arguments((rid, 'int', False)):
-        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400)
+        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400))
 
     resp = expenses.get_expenses(uid, rid)
     return flask.Response(flask.json.jsonify(resp), status=200)
@@ -103,7 +103,7 @@ def delete_expense():
     eid = flask.request.args.get('eid')
 
     if not validate_arguments((rid, 'int', False), (eid, 'int', False)):
-        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400)
+        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400))
 
     expenses.delete_expense(uid, rid, eid)
     return flask.Response(status=200)
@@ -125,7 +125,7 @@ def update_expense():
                               (category, 'str', True),
                               (amount, 'float', False),
                               (image, 'str', True)):
-        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400)
+        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400))
 
     expenses.update_expense(uid, rid, eid, description, category, amount, image)
     return flask.Response(status=200)
@@ -147,7 +147,7 @@ def create_expense():
                               (category, 'str', True),
                               (amount, 'float', False),
                               (image, 'str', True)):
-        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400)
+        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400))
 
     expenses.add_expense(uid, rid, eid, description, category, amount, image)
     return flask.Response(status=201)

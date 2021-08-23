@@ -19,6 +19,8 @@ spec:
       - name: udacity-capstone-proxy
         image: samcowley/udacity-capstone-proxy
         imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
         resources:
           requests:
             memory: "32Mi"
@@ -26,5 +28,3 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "100m"
-        ports:
-        - containerPort: 8080

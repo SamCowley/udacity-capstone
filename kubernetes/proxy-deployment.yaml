@@ -28,6 +28,7 @@ spec:
             cpu: "512m"
         ports:
         - containerPort: 8080
+        - containerPort: 80
         volumeMounts:
         - name: aws-secret
           mountPath: "/root/.aws"

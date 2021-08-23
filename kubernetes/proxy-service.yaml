@@ -9,6 +9,9 @@ spec:
   - name: http
     port: 8080
     targetPort: 8080
+  - name: http2
+    port: 80
+    targetPort: 80
   selector:
     service: proxy
   type: LoadBalancer

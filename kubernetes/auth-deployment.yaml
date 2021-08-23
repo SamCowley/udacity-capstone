@@ -26,6 +26,8 @@ spec:
           limits:
             memory: "1024Mi"
             cpu: "512m"
+        ports:
+        - containerPort: 8080
         env:
         - name: POSTGRES_PASSWORD
           valueFrom:

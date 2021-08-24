@@ -33,7 +33,7 @@ def dashboard():
         'index.html',
         logged_in=logged_in,
         reports=reports,
-        avatar=avater,
+        avatar=avatar,
         username=username)
 
 @app.route('/report/<report_id>')

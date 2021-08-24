@@ -102,10 +102,12 @@ class Expenses:
     def add_report(self, uid, name):
         try:
             self.rds_cur.execute("SELECT MAX(rid) FROM {} where uid=%s".format(self.rds_report_table), (uid,))
-            rid = self.rds_cur.fetchall()[0]
+            rid = self.rds_cur.fetchall()[0][0]
             self.rds_conn.commit()
         except:
             rid = 0
+        if rid is None: rid = 0
+
         self.rds_cur.execute("INSERT INTO {} (uid, rid, name) VALUES (%s, %s, %s);".format(self.rds_report_table), (uid, int(rid) + 1, name))
         self.rds_conn.commit()
 
@@ -146,10 +148,11 @@ class Expenses:
     def add_expense(self, uid, rid, description = None, category = None, amount = None, image = None):
         try:
             self.rds_cur.execute("SELECT MAX(eid) FROM {} where uid=%s and rid=%s".format(self.rds_expense_table), (uid, rid))
-            eid = self.rds_cur.fetchall()[0]
+            eid = self.rds_cur.fetchall()[0][0]
             self.rds_conn.commit()
         except:
             eid = 0
+        if eid is None: eid = 0
 
         fields = [uid, rid, int(eid) + 1]
         fields.append(description)

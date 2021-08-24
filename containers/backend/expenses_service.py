@@ -56,19 +56,19 @@ class Expenses:
 
        aws = boto3.Session(profile_name='default')
 
-       rds = aws.client('rds')
-       self.rds_token = rds.generate_db_auth_token(
-           DBHostname=self.rds_endpoint,
-           Port=self.rds_port,
-           DBUsername=self.rds_user,
-           Region=self.rds_region)
+       #rds = aws.client('rds')
+       #self.rds_token = rds.generate_db_auth_token(
+       #    DBHostname=self.rds_endpoint,
+       #    Port=self.rds_port,
+       #    DBUsername=self.rds_user,
+       #    Region=self.rds_region)
 
        self.rds_conn = psycopg2.connect(
            host=self.rds_endpoint,
            port=self.rds_port,
            database=self.rds_db,
            user=self.rds_user,
-           password=self.rds_token)
+           password=self.rds_pass)
 
        self.rds_cur = self.rds_conn.cursor()
 

@@ -29,6 +29,41 @@ spec:
         env:
         - name: PYTHONUNBUFFERED
           value: "0"
+        - name: session_secret 
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: session_secret
+        - name: s3_bucket
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: s3_bucket
+        - name: s3_timeout
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: s3_timeout
+        - name: s3_region
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: s3_region
+        - name: rds_endpoint
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: rds_endpoint
+        - name: rds_port
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: rds_port
+        - name: rds_db
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: rds_db
         - name: rds_user
           valueFrom:
             secretKeyRef:
@@ -44,16 +79,6 @@ spec:
             secretKeyRef:
               name: secrets
               key: rds_region
-        - name: s3_bucket
-          valueFrom:
-            secretKeyRef:
-              name: secrets
-              key: s3_bucket
-        - name: s3_timeout
-          valueFrom:
-            secretKeyRef:
-              name: secrets
-              key: s3_timeout
         volumeMounts:
         - name: aws-secret
           mountPath: "/root/.aws"

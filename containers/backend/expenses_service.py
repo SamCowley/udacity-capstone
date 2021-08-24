@@ -54,7 +54,7 @@ class Expenses:
         
     def init_db(self):
        def table_exists(name):
-           self.rds_cur.execute("\dt %s;", (name,))
+           self.rds_cur.execute("SELECT relname FROM pg_class WHERE relkind='r' AND relname = %s;", (name,))
            return len(self.rds_cur.fetchall()) > 0
 
        aws = boto3.Session(profile_name='default')

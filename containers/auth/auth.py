@@ -33,23 +33,4 @@ def logout():
     flask.session.clear()
     return flask.redirect('/')
 
-@app.route('/token', methods=["POST"])
-def token():
-    print("Requesting token")
-    data = flask.request.get_json()
-    username = data['username']
-    password = data['password']
-
-    response = auth.token(username, password)
-    print(response)
-    print(response.content)
-    flask.session['profile'] = {
-        'user_id': userinfo['sub'],
-        'name': userinfo['name'],
-        'picture': userinfo['picture']
-    }
-
-    token = flask.session
-    return flask.Response(flask.json.jsonify(token), status=200)
-
 waitress.serve(app, host='0.0.0.0', port=8080, threads=18)

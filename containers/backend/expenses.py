@@ -46,7 +46,7 @@ def get_all_reports():
     uid = flask.session['profile']['user_id']
     reports = expenses.get_all_reports(uid)
 
-    return flask.Response(flask.json.jsonify({"data": reports}), status=200)
+    return flask.make_response(flask.jsonify({"data": reports}), 200)
 
 @app.route('/delete', methods=['POST'])
 @requires_auth
@@ -55,10 +55,10 @@ def delete_report():
     rid = flask.request.args.get('rid')
 
     if not validate_arguments((rid, 'int', False)):
-        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400))
+        return flask.make_response(flask.jsonify({"message": "Invalid parameters"}, 400))
 
     expenses.delete_report(uid, rid)
-    return flask.Response(status=200)
+    return flask.make_response(flask.jsonify({"message": "Success"}), 200)
 
 @app.route('/update', methods=['POST'])
 @requires_auth
@@ -68,10 +68,10 @@ def update_report():
     name = flask.request.args.get('name')
 
     if not validate_arguments((rid, 'int', False), (name, 'str', False)):
-        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400))
+        return flask.make_response(flask.jsonify({"message": "Invalid parameters"}, 400))
 
     expenses.update_report(uid, rid, name)
-    return flask.Response(status=200)
+    return flask.make_response(flask.jsonify({"message": "Success"}), 200)
 
 @app.route('/create', methods=['POST'])
 @requires_auth
@@ -80,10 +80,10 @@ def create_report():
     name = flask.request.args.get('name')
 
     if not validate_arguments((name, 'str', False)):
-        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400))
+        return flask.make_response(flask.jsonify({"message": "Invalid parameters"}, 400))
 
     expenses.add_report(uid, name)
-    return flask.Response(flask.json.jsonify({"message": "Success" }), status=201)
+    return flask.make_response(flask.jsonify({"message": "Success"}), 201)
 
 @app.route('/expenses/list', methods=['POST'])
 @requires_auth
@@ -92,10 +92,10 @@ def get_report_expenses(rid):
     rid = flask.request.args.get('rid')
 
     if not validate_arguments((rid, 'int', False)):
-        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400))
+        return flask.make_response(flask.jsonify({"message": "Invalid parameters"}, 400))
 
     resp = expenses.get_expenses(uid, rid)
-    return flask.Response(flask.json.jsonify({"data": resp}), status=200)
+    return flask.make_response(flask.jsonify({"data": resp}), 200)
 
 @app.route('/expenses/delete', methods=['POST'])
 @requires_auth
@@ -105,10 +105,10 @@ def delete_expense():
     eid = flask.request.args.get('eid')
 
     if not validate_arguments((rid, 'int', False), (eid, 'int', False)):
-        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400))
+        return flask.make_response(flask.jsonify({"message": "Invalid parameters"}, 400))
 
     expenses.delete_expense(uid, rid, eid)
-    return flask.Response(status=200)
+    return flask.make_response(flask.jsonify({"message": "Success"}), 200)
 
 @app.route('/expenses/update', methods=['POST'])
 @requires_auth
@@ -127,10 +127,10 @@ def update_expense():
                               (category, 'str', True),
                               (amount, 'float', False),
                               (image, 'str', True)):
-        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400))
+        return flask.make_response(flask.jsonify({"message": "Invalid parameters"}, 400))
 
     expenses.update_expense(uid, rid, eid, description, category, amount, image)
-    return flask.Response(status=200)
+    return flask.make_response(flask.jsonify({"message": "Success"}), 200)
 
 @app.route('/expenses/create', methods=['POST'])
 @requires_auth
@@ -149,10 +149,10 @@ def create_expense():
                               (category, 'str', True),
                               (amount, 'float', False),
                               (image, 'str', True)):
-        return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400))
+        return flask.make_response(flask.jsonify({"message": "Invalid parameters"}, 400))
 
     expenses.add_expense(uid, rid, eid, description, category, amount, image)
-    return flask.Response(status=201)
+    return flask.make_response(flask.jsonify({"message": "Success"}), 201)
 
 @app.route('/upload')
 @requires_auth

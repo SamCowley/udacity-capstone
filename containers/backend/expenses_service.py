@@ -70,15 +70,15 @@ class Expenses:
 
        # Create Report Table
        if not table_exists(self.rds_report_table):
-           self.rds_cur.execute("CREATE TABLE %s (uid TEXT, rid INT, name TEXT, PRIMARY KEY (uid, rid));", (self.rds_report_table,))
+           self.rds_cur.execute("CREATE TABLE {} (uid TEXT, rid INT, name TEXT, PRIMARY KEY (uid, rid));".format(self.rds_report_table))
 
        # Create Expense Table
        if not table_exists(self.rds_expense_table):
-           self.rds_cur.execute("CREATE TABLE %s (uid TEXT, rid INT, eid INT, description TEXT, category TEXT, amount INT, image TEXT, PRIMARY KEY (uid, rid, eid));", (self.rds_expense_table,))
+           self.rds_cur.execute("CREATE TABLE {} (uid TEXT, rid INT, eid INT, description TEXT, category TEXT, amount INT, image TEXT, PRIMARY KEY (uid, rid, eid));".format(self.rds_expense_table))
 
     # Reports
     def get_all_reports(self, uid):
-        self.rds_cur.execute("SELECT * FROM %s where uid=%s;", (self.rds_report_table, uid))
+        self.rds_cur.execute("SELECT * FROM {} where uid=%s;".format(self.rds_report_table), (uid,))
         try:
             res = []
             for item in self.rds_cur.fetchall():
@@ -88,19 +88,23 @@ class Expenses:
             return None
 
     def delete_report(self, uid, rid):
-        self.rds_cur.execute("DELETE FROM %s where uid=%s AND rid=%s;", (self.rds_report_table, uid, rid))
-        self.rds_cur.execute("DELETE FROM %s where uid=%s and rid=%s;", (self.rds_expense_table, uid, rid))
+        self.rds_cur.execute("DELETE FROM {} where uid=%s AND rid=%s;".format(self.rds_report_table), (uid, rid))
+        self.rds_cur.execute("DELETE FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (uid, rid))
 
     def update_report(self, uid, rid, name):
-        self.rds_cur.execute("UPDATE SET name = %s FROM %s where uid=%s AND rid=%s;", (name, self.rds_report_table, uid, rid))
+        self.rds_cur.execute("UPDATE SET name = %s FROM {} where uid=%s AND rid=%s;".format(self.rds_report_table), (name, uid, rid))
 
     def add_report(self, uid, name):
-        self.rds_cur.execute("SELECT MAX(rid) FROM %s where uid=%s", (self.rds_report_table, uid))
-        self.rds_cur.execute("INSERT INTO %s (uid, rid, name) VALUES (%s, %s, %s);", (self.rds_report_table, uid, int(rid) + 1, name))
+        try:
+            self.rds_cur.execute("SELECT MAX(rid) FROM {} where uid=%s".format(self.rds_report_table), (uid,))
+            rid = self.rds_cur.fetchall()[0]
+        except:
+            rid = 0
+        self.rds_cur.execute("INSERT INTO {} (uid, rid, name) VALUES (%s, %s, %s);".format(self.rds_report_table), (uid, int(rid) + 1, name))
 
     # Expenses
     def get_expenses(self, uid, rid):
-        self.rds_cur.execute("SELECT * FROM %s where uid=%s and rid=%s;", (self.rds_expense_table, uid, rid))
+        self.rds_cur.execute("SELECT * FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (uid, rid))
         try:
             res = []
             for item in self.rds_cur.fetchall():
@@ -110,44 +114,39 @@ class Expenses:
             return None
 
     def delete_expense(self, uid, rid, eid):
-        self.rds_cur.execute("DELETE FROM %s where uid=%s and rid=%s;", (self.rds_expense_table, uid, rid))
+        self.rds_cur.execute("DELETE FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (uid, rid))
 
     def update_expense(self, uid, rid, eid, description, category, amount, image):
         fields = []
-        command = []
-        def add(f, c, name, value):
-            if value is not None:
-                fields.append(value)
-                command.append(name + " = %s")
-        
-        add(fields, command, "description", description)
-        add(fields, command, "category", category)
-        add(fields, command, "amount", amount)
-        add(fields, command, "image", image)
 
-        fields.append(self.rds_expense_table)
+        fields.append("description")
+        fields.append(description)
+        fields.append("category")
+        fields.append(category)
+        fields.append("amount")
+        fields.append(amount)
+        fields.append("image")
+        fields.append(image)
         fields.append(uid)
         fields.append(rid)
         fields.append(eid)
             
-        self.rds_cur.execute("UPDATE SET " + ", ".join(command) + " FROM %s where uid=%s AND rid=%s AND eid=%s;", tuple(fields))
+        self.rds_cur.execute("UPDATE SET {} FROM {} where uid=%s AND rid=%s AND eid=%s;".format(", ".join(["%s=%s"]*(len(fields) - 3)/2), self.rds_expense_table), tuple(fields))
 
     def add_expense(self, uid, rid, description = None, category = None, amount = None, image = None):
-        self.rds_cur.execute("SELECT MAX(eid) FROM %s where uid=%s and rid=%s", (self.rds_expense_table, uid, rid))
+        try:
+            self.rds_cur.execute("SELECT MAX(eid) FROM {} where uid=%s and rid=%s".format(self.rds_expense_table), (uid, rid))
+            eid = self.rds_cur.fetchall()[0]
+        except:
+            eid = 0
 
-        fields = [self.rds_expense_table, uid, rid, int(eid) + 1]
-        command = []
-        def add(f, c, name, value):
-            if value is not None:
-                fields.append(value)
-                command.append(name)
+        fields = [uid, rid, int(eid) + 1]
+        fields.append(description)
+        fields.append(category)
+        fields.append(amount)
+        fields.append(image)
 
-        add(fields, command, "description", description)
-        add(fields, command, "category", category)
-        add(fields, command, "amount", amount)
-        add(fields, command, "image", image)
-
-        self.rds_cur.execute("INSERT INTO %s (" + ", ".join(command) + ") VALUES (" + ", ".join(["%s"]*len(command)) + ");", tuple(fields))
+        self.rds_cur.execute("INSERT INTO {} (uid, rid, eid, description, category, amount, image) VALUES (%s, %s, %s, %s, %s, %s, %s);".format(self.rds_expense_table), tuple(fields))
 
     # Other
     def upload_image(self, object_name):

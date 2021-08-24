@@ -3,6 +3,7 @@ import expenses_service
 from functools import wraps
 import flask
 from flask_cors import CORS
+import waitress
 
 app = flask.Flask(__name__)
 CORS(app)

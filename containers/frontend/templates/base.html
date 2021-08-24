@@ -6,8 +6,7 @@
         <li><a {% if is_dashboard %} class="selected" {% endif %} href="/">Dashboard</a></li>
         {% block subsection_title %}{% endblock %}
         {% if logged_in %}
-            <li style="float:right"><img src="{{ avatar }}"></li>
-            <li style="float:right">{{ username }}</li>
+            <li style="float:right"><a>{{ username }}</a></li>
             <li style="float:right"><a href="api/v0/auth/logout">Logout</a></li>
         {% else %}
             <li style="float:right"><a href="api/v0/auth/login">Login</a></li>

@@ -15,10 +15,8 @@ def dashboard():
     print("Requesting dashboard")
     logged_in = 'profile' in flask.session
     reports = []
-    avatar = ''
     username = ''
     if logged_in:
-        avatar = flask.session['profile']['picture']
         username = flask.session['profile']['name']
         url = flask.request.url_root + "/api/v0/report/list"
         try:
@@ -33,7 +31,6 @@ def dashboard():
         'index.html',
         logged_in=logged_in,
         reports=reports,
-        avatar=avatar,
         username=username)
 
 @app.route('/report/<report_id>')

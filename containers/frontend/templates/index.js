@@ -29,7 +29,7 @@ window.onload = function() {
     const form_create_report = document.getElementById("new-report");
     if (form_create_report != null) {
         form_create_report.addEventListener("submit", function(event) {
-            const form_create_report = document.getElementById("create-report");
+            const form_create_report = document.getElementById("new-report");
             event.preventDefault();
             var xhr = new XMLHttpRequest();
             xhr.open("POST", "/api/v0/report/create")

@@ -31,6 +31,7 @@ def callback():
 def logout():
     print("Requesting logout")
     flask.session.clear()
+    return flask.redirect('/')
 
 @app.route('/token', methods=["POST"])
 def token():

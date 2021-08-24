@@ -15,7 +15,11 @@ def dashboard():
     print("Requesting dashboard")
     logged_in = 'profile' in flask.session
     reports = []
+    avatar = ''
+    username = ''
     if logged_in:
+        avatar = flask.session['profile']['picture']
+        username = flask.session['profile']['name']
         url = flask.request.url_root + "/api/v0/report/list"
         try:
             resp = requests.get(url = url)
@@ -25,7 +29,12 @@ def dashboard():
             pass
     
     print("Returning dashboard rendering")
-    return flask.render_template('index.html', logged_in=logged_in, reports=reports)
+    return flask.render_template(
+        'index.html',
+        logged_in=logged_in,
+        reports=reports,
+        avatar=avater,
+        username=username)
 
 @app.route('/report/<report_id>')
 def expenses(report_id):

@@ -69,11 +69,11 @@ class Expenses:
        self.rds_cur = self.rds_conn.cursor()
 
        # Create Report Table
-       if table_exists(self.rds_report_table):
+       if not table_exists(self.rds_report_table):
            self.rds_cur.execute("CREATE TABLE %s (uid TEXT, rid INT, name TEXT, PRIMARY KEY (uid, rid));", (self.rds_report_table,))
 
        # Create Expense Table
-       if table_exists(self.rds_expense_table):
+       if not table_exists(self.rds_expense_table):
            self.rds_cur.execute("CREATE TABLE %s (uid TEXT, rid INT, eid INT, description TEXT, category TEXT, amount INT, image TEXT, PRIMARY KEY (uid, rid, eid));", (self.rds_expense_table,))
 
     # Reports

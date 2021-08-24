@@ -77,13 +77,12 @@ def update_report():
 @requires_auth
 def create_report():
     uid = flask.session['profile']['user_id']
-    rid = flask.request.args.get('rid')
     name = flask.request.args.get('name')
 
-    if not validate_arguments((rid, 'int', False), (name, 'str', False)):
+    if not validate_arguments((name, 'str', False)):
         return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400))
 
-    expenses.add_report(uid, rid, name)
+    expenses.add_report(uid, name)
     return flask.Response(status=201)
 
 @app.route('/expenses', methods=['POST'])

@@ -1,1 +1,3 @@
 __pycache__
+kubernetes/aws-secrets.yaml
+kubernetes/secrets.yaml

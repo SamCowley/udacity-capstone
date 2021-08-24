@@ -1,3 +1,4 @@
+import os
 import psycopg2
 import boto3
 
@@ -18,8 +19,7 @@ class ReportItem:
         self.name = name
 
 class Expenses:
-    def __init__(self, app):
-        self.app = app
+    def __init__(self):
         self.init_config()
         self.init_db()
         self.s3 = boto3.client('s3')
@@ -40,11 +40,14 @@ class Expenses:
         try: self.rds_user = os.environ['rds_user']
         except: raise UnboundLocalError('rds_user')
 
-        try: self.rds_user = os.environ['rds_pass']
+        try: self.rds_pass = os.environ['rds_pass']
         except: raise UnboundLocalError('rds_pass')
 
         try: self.rds_region = os.environ['rds_region']
         except: raise UnboundLocalError('rds_region')
+
+        try: self.rds_db = os.environ['rds_db']
+        except: raise UnboundLocalError('rds_db')
         
     def init_db(self):
        def table_exists(name):
@@ -54,7 +57,7 @@ class Expenses:
        aws = boto3.Session(profile_name='default')
 
        rds = aws.client('rds')
-       self.rds_token = client.generate_db_auth_token(
+       self.rds_token = rds.generate_db_auth_token(
            DBHostname=self.rds_endpoint,
            Port=self.rds_port,
            DBUsername=self.rds_user,
@@ -63,7 +66,7 @@ class Expenses:
        self.rds_conn = psycopg2.connect(
            host=self.rds_endpoint,
            port=self.rds_port,
-           database=self.rds_dbname,
+           database=self.rds_db,
            user=self.rds_user,
            password=self.rds_token)
 

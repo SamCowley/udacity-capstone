@@ -18,19 +18,11 @@ def dashboard():
     username = ''
     if logged_in:
         username = flask.session['profile']['name']
-        url = flask.request.url_root + "/api/v0/report/list"
-        try:
-            resp = requests.get(url = url)
-            if resp.ok:
-                reports = resp.json()
-        except:
-            pass
     
     print("Returning dashboard rendering")
     return flask.render_template(
         'index.html',
         logged_in=logged_in,
-        reports=reports,
         username=username)
 
 @app.route('/report/<report_id>')

@@ -46,7 +46,7 @@ def get_all_reports():
     uid = flask.session['profile']['user_id']
     reports = expenses.get_all_reports(uid)
 
-    return flask.Response(flask.json.jsonify(reports), status=200)
+    return flask.Response(flask.json.jsonify({"data": reports}), status=200)
 
 @app.route('/delete', methods=['POST'])
 @requires_auth
@@ -83,7 +83,7 @@ def create_report():
         return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400))
 
     expenses.add_report(uid, name)
-    return flask.Response(status=201)
+    return flask.Response(flask.json.jsonify({"message": "Success" }), status=201)
 
 @app.route('/expenses/list', methods=['POST'])
 @requires_auth
@@ -95,7 +95,7 @@ def get_report_expenses(rid):
         return flask.Response(flask.json.jsonify({"message": "Invalid parameters"}, status=400))
 
     resp = expenses.get_expenses(uid, rid)
-    return flask.Response(flask.json.jsonify(resp), status=200)
+    return flask.Response(flask.json.jsonify({"data": resp}), status=200)
 
 @app.route('/expenses/delete', methods=['POST'])
 @requires_auth

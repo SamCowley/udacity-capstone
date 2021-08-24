@@ -2,22 +2,6 @@ import os
 import psycopg2
 import boto3
 
-class ExpenseItem:
-    def __init__(self, uid, rid, eid, description, category, amount, image):
-        self.uid = uid
-        self.rid = rid
-        self.eid = eid
-        self.description = description
-        self.category = category
-        self.amount = amount
-        self.image_url = image
-
-class ReportItem:
-    def __init__(self, uid, rid, name):
-        self.uid = uid
-        self.rid = rid
-        self.name = name
-
 class Expenses:
     def __init__(self):
         self.init_config()
@@ -84,7 +68,7 @@ class Expenses:
         try:
             res = []
             for item in self.rds_cur.fetchall():
-                res.append(ReportItem(item[0], item[1], item[2]))
+                res.append(item)
             self.rds_conn.commit()
             return res
         except:
@@ -117,7 +101,7 @@ class Expenses:
         try:
             res = []
             for item in self.rds_cur.fetchall():
-                res.append(ExpenseItem(item[0], item[1], item[2], item[3], item[4], item[5], item[6]))
+                res.append(item)
             self.rds_conn.commit()
             return res
         except:

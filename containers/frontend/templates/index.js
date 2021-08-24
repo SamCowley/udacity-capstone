@@ -25,6 +25,37 @@ function close_popup() {
     }
 }
 
+function delete_reports_list() {
+    const reports_list = document.getElementById("reports_list")
+    while (reports_list.firstChild) {
+        reports_list.removeChild(reports_list.firstChild);
+    }
+}
+
+function load_reports() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            delete_reports_list();
+            var listNode = document.getElementById("reports_list")
+            var resp = JSON.parse(request.response)
+            var data = resp['data']
+            for ( int i = 0; i < data.length; i++) {
+                var newNode = document.getElementById("report_item_template").cloneNode(true);
+                newNode.id = "";
+                newNode.children[0].textContent = data[i][2];
+                newNode.children[0].href = "/report/" + data[i][1];
+                newNode.children[1].onclick = "update_report(" + data[i][1] + ")";
+                newNode.children[2].onclick = "delete_report(" + data[i][1] + ")";
+                listNode.appendChild(newNode);
+            }
+        }
+    }
+
+    xhr.open("POST", "/api/v0/report/list")
+    xhr.send(null)
+}
+
 window.onload = function() {
     const form_create_report = document.getElementById("new-report");
     if (form_create_report != null) {
@@ -37,7 +68,7 @@ window.onload = function() {
                 "name":  form_create_report.children[0].value
             }));
             close_popup()
-            location.reload()
+            load_reports()
         });
     }
     
@@ -52,7 +83,7 @@ window.onload = function() {
             "name": form_update_report.children[1].value
         }));
         close_popup()
-        location.reload()
+        load_reports()
     });
     
     const form_delete_report = document.getElementById("delete-report");
@@ -65,6 +96,8 @@ window.onload = function() {
             "rid":  form_delete_report.children[0].value
         }));
         close_popup()
-        location.reload()
+        load_reports()
     });
+
+    load_reports()
 };

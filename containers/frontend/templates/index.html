@@ -14,14 +14,7 @@
 
 {% block content %}
     {% if logged_in %}
-        <div class="reports_list">
-            {% for report in reports %}
-                <div class="report_item">
-                    <a href="/report/{{ report['id'] }}">{{ report['name'] }}</a>
-                    <button class="update_report" onclick="update_report({{ report['id'] }})">Update</button>
-                    <button class="delete_report" onclick="delete_report({{ report['id'] }})">Delete</button>
-                </div>
-            {% endfor %}
+        <div id="reports_list">
         </div>
     {% else %}
         <h1>No Reports Available</h1>
@@ -52,5 +45,13 @@
             <input type="submit" value="Delete" />
         </form>
         <button onclick="close_popup()">Cancel</button>
+    </div>
+
+    <div id="templates">
+        <div class="report_item">
+            <a></a>
+            <button class="update_report">Update</button>
+            <button class="delete_report">Delete</button>
+        </div>
     </div>
 {% endblock %}

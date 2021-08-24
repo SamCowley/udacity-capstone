@@ -40,7 +40,7 @@ def validate_arguments(*args, **kwargs):
             return False
     return True
 
-@app.route('/report/list', methods=['POST'])
+@app.route('/list', methods=['POST'])
 @requires_auth
 def get_all_reports():
     uid = flask.session['profile']['user_id']
@@ -48,7 +48,7 @@ def get_all_reports():
 
     return flask.Response(flask.json.jsonify(reports), status=200)
 
-@app.route('/report/delete', methods=['POST'])
+@app.route('/delete', methods=['POST'])
 @requires_auth
 def delete_report():
     uid = flask.session['profile']['user_id']
@@ -60,7 +60,7 @@ def delete_report():
     expenses.delete_report(uid, rid)
     return flask.Response(status=200)
 
-@app.route('/report/update', methods=['POST'])
+@app.route('/update', methods=['POST'])
 @requires_auth
 def update_report():
     uid = flask.session['profile']['user_id']
@@ -73,7 +73,7 @@ def update_report():
     expenses.update_report(uid, rid, name)
     return flask.Response(status=200)
 
-@app.route('/report/create', methods=['POST'])
+@app.route('/create', methods=['POST'])
 @requires_auth
 def create_report():
     uid = flask.session['profile']['user_id']

@@ -148,7 +148,7 @@ class Expenses:
         add(fields, command, "amount", amount)
         add(fields, command, "image", image)
 
-        self.rds_cur.execute("INSERT INTO %s (" + ", ".join(command) ") VALUES (" + ", ".join(["%s"]*len(command)) + ");", tuple(fields))
+        self.rds_cur.execute("INSERT INTO %s (" + ", ".join(command) + ") VALUES (" + ", ".join(["%s"]*len(command)) + ");", tuple(fields))
 
     # Other
     def upload_image(self, object_name):

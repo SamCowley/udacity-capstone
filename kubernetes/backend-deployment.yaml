@@ -27,6 +27,8 @@ spec:
             memory: "1024Mi"
             cpu: "512m"
         env:
+        - name: PYTHONUNBUFFERED
+          value: "0"
         - name: rds_user
           valueFrom:
             secretKeyRef:

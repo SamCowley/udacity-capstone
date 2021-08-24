@@ -46,9 +46,8 @@ class Auth0:
     def callback(self):
         self.auth0.authorize_access_token()
         resp = self.auth0.get('userinfo')
-        userinfo = resp.json()
-
-        return userinfo
+        print(resp)
+        return resp.json()
 
     def token(self, username, password):
         resp = self.auth0.login(

@@ -40,7 +40,7 @@ function load_reports() {
             var listNode = document.getElementById("reports_list")
             var resp = JSON.parse(request.response)
             var data = resp['data']
-            for ( int i = 0; i < data.length; i++) {
+            for ( let i = 0; i < data.length; i++) {
                 var newNode = document.getElementById("report_item_template").cloneNode(true);
                 newNode.id = "";
                 newNode.children[0].textContent = data[i][2];
@@ -50,7 +50,7 @@ function load_reports() {
                 listNode.appendChild(newNode);
             }
         }
-    }
+    };
 
     xhr.open("POST", "/api/v0/report/list")
     xhr.send(null)

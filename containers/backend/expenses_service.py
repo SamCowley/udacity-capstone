@@ -48,6 +48,9 @@ class Expenses:
 
         try: self.rds_db = os.environ['rds_db']
         except: raise UnboundLocalError('rds_db')
+
+        self.rds_report_table = "reports"
+        self.rds_expense_table = "expenses"
         
     def init_db(self):
        def table_exists(name):
@@ -55,13 +58,6 @@ class Expenses:
            return len(self.rds_cur.fetchall()) > 0
 
        aws = boto3.Session(profile_name='default')
-
-       #rds = aws.client('rds')
-       #self.rds_token = rds.generate_db_auth_token(
-       #    DBHostname=self.rds_endpoint,
-       #    Port=self.rds_port,
-       #    DBUsername=self.rds_user,
-       #    Region=self.rds_region)
 
        self.rds_conn = psycopg2.connect(
            host=self.rds_endpoint,

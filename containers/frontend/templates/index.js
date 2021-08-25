@@ -32,6 +32,13 @@ function delete_reports_list() {
     }
 }
 
+function get_session() {
+    all_cookies = document.cookie
+    match = all_cookies.match(new RegExp('(^| )session=([^;]+)')
+    if (match) return match[2];
+    return ''
+}
+
 function load_reports() {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
@@ -53,7 +60,9 @@ function load_reports() {
     };
 
     xhr.open("POST", "/api/v0/report/list")
-    xhr.send(null)
+    xhr.send(JSON.stringify({
+        "token": get_session()
+    }));
 }
 
 window.onload = function() {
@@ -65,7 +74,8 @@ window.onload = function() {
             var xhr = new XMLHttpRequest();
             xhr.open("POST", "/api/v0/report/create")
             xhr.send(JSON.stringify({
-                "name":  form_create_report.children[0].value
+                "token": get_session(),
+                "name": form_create_report.children[0].value
             }));
             close_popup()
             load_reports()
@@ -79,6 +89,7 @@ window.onload = function() {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/api/v0/report/update")
         xhr.send(JSON.stringify({
+            "token": get_session(),
             "rid": form_update_report.children[0].value,
             "name": form_update_report.children[1].value
         }));
@@ -93,6 +104,7 @@ window.onload = function() {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/api/v0/report/delete")
         xhr.send(JSON.stringify({
+            "token": get_session(),
             "rid":  form_delete_report.children[0].value
         }));
         close_popup()

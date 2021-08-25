@@ -46,9 +46,9 @@ function load_reports() {
             delete_reports_list();
             var listNode = document.getElementById("reports_list")
             var resp = JSON.parse(xhr.response)
-            var data = resp[0]['data']
+            var data = resp['data']
             for ( let i = 0; i < data.length; i++) {
-                var newNode = document.getElementById("report_item_template").cloneNode(true);
+                var newNode = document.getElementById("templates").children[0].cloneNode(true);
                 newNode.id = "";
                 newNode.children[0].textContent = data[i][2];
                 newNode.children[0].href = "/report/" + data[i][1];

@@ -1,12 +1,12 @@
-{% set dashboard = True %}
+{% set is_dashboard = False %}
 {% extends 'base.html' %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Report{% endblock %}
 
 {% block content %}
-   <ul class="dashboard">
-       {% for sheet in sheets %}
-           <li><a id="{{ sheet['id'] }}" href="/{{ sheet['id'] }}">{{ sheet['name'] }}</a></li>
-       {% endfor %}
-   </ul>
+   <div id="expenses_list">
+        {% if not logged_in %}
+            <h1>Log in to view expenses</h1>
+        {% endif %}
+   </div>
 {% endblock %}

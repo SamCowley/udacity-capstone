@@ -4,7 +4,6 @@ import flask
 from flask_cors import CORS
 import os
 import waitress
-from itsdangerous import Signer
 
 app = flask.Flask(__name__)
 # Allow client side scripts to read the session cookie
@@ -18,7 +17,6 @@ except: raise UnboundLocalError('Missing values: session_secret')
 
 # Service
 auth = auth_service.Auth0(app)
-signer = Signer(os.environ['session_secret'])
 
 @app.route('/login')
 def login():
@@ -41,14 +39,6 @@ def logout():
     print("Requesting logout")
     flask.session.clear()
     return flask.redirect('/')
-
-#@app.route('/token')
-#def token():
-#    print("Requesting token")
-#    if 'profile' not in flask.session:
-#        return flask.make_response(flask.jsonify({"message": "Login Required"}, 400))
-#    token = str(signer.sign(flask.session['profile']['user_id']))
-#    return flask.make_response(flask.jsonify({"token": token}, 200)
 
 waitress.serve(app, host='0.0.0.0', port=8080, threads=18)
 

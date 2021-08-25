@@ -19,7 +19,6 @@ except: raise UnboundLocalError('Missing values: session_secret')
 
 # Service
 expenses = expenses_service.Expenses()
-signer = Signer(os.environ['session_secret'])
 
 def authenticate_token(session):
     session_interface = flask.sessions.SecureCookieSessionInterface()

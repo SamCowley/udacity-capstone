@@ -64,45 +64,56 @@ class Expenses:
 
     # Reports
     def get_all_reports(self, uid):
-        self.rds_cur.execute("SELECT * FROM {} where uid=%s;".format(self.rds_report_table), (uid,))
         try:
+            self.rds_cur.execute("SELECT * FROM {} where uid=%s;".format(self.rds_report_table), (uid,))
             res = []
             for item in self.rds_cur.fetchall():
                 res.append(item)
             self.rds_conn.commit()
             return res
         except:
+            self.rds_conn.cancel()
             return None
 
     def delete_report(self, uid, rid):
-        self.rds_cur.execute("DELETE FROM {} where uid=%s AND rid=%s;".format(self.rds_report_table), (uid, rid))
-        self.rds_cur.execute("DELETE FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (uid, rid))
-        self.rds_conn.commit()
+        try:
+            self.rds_cur.execute("DELETE FROM {} where uid=%s AND rid=%s;".format(self.rds_report_table), (uid, rid))
+            self.rds_cur.execute("DELETE FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (uid, rid))
+            self.rds_conn.commit()
+        except:
+            self.rds_conn.cancel()
 
     def update_report(self, uid, rid, name):
-        self.rds_cur.execute("UPDATE SET name = %s FROM {} where uid=%s AND rid=%s;".format(self.rds_report_table), (name, uid, rid))
-        self.rds_conn.commit()
+        try:
+            self.rds_cur.execute("UPDATE SET name = %s FROM {} where uid=%s AND rid=%s;".format(self.rds_report_table), (name, uid, rid))
+            self.rds_conn.commit()
+        except:
+            self.rds_conn.cancel()
 
     def add_report(self, uid, name):
-        self.rds_cur.execute("SELECT MAX(rid) FROM {} where uid=%s".format(self.rds_report_table), (uid,))
-        rid = self.rds_cur.fetchall()[0][0]
-        self.rds_conn.commit()
-        if rid is None:
-            rid = 0
+        try:
+            self.rds_cur.execute("SELECT MAX(rid) FROM {} where uid=%s".format(self.rds_report_table), (uid,))
+            rid = self.rds_cur.fetchall()[0][0]
+            self.rds_conn.commit()
+            if rid is None:
+                rid = 0
 
-        self.rds_cur.execute("INSERT INTO {} (uid, rid, name) VALUES (%s, %s, %s);".format(self.rds_report_table), (uid, int(rid) + 1, name))
-        self.rds_conn.commit()
+            self.rds_cur.execute("INSERT INTO {} (uid, rid, name) VALUES (%s, %s, %s);".format(self.rds_report_table), (uid, int(rid) + 1, name))
+            self.rds_conn.commit()
+        except:
+            self.rds_conn.cancel()
 
     # Expenses
     def get_expenses(self, uid, rid):
-        self.rds_cur.execute("SELECT * FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (uid, rid))
         try:
+            self.rds_cur.execute("SELECT * FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (uid, rid))
             res = []
             for item in self.rds_cur.fetchall():
                 res.append(item)
             self.rds_conn.commit()
             return res
         except:
+            self.rds_conn.cancel()
             return None
 
     def delete_expense(self, uid, rid, eid):
@@ -124,24 +135,30 @@ class Expenses:
         fields.append(rid)
         fields.append(eid)
             
-        self.rds_cur.execute("UPDATE SET {} FROM {} where uid=%s AND rid=%s AND eid=%s;".format(", ".join(["%s=%s"]*(len(fields) - 3)/2), self.rds_expense_table), tuple(fields))
-        self.rds_conn.commit()
+        try:
+            self.rds_cur.execute("UPDATE SET {} FROM {} where uid=%s AND rid=%s AND eid=%s;".format(", ".join(["%s=%s"]*(len(fields) - 3)/2), self.rds_expense_table), tuple(fields))
+            self.rds_conn.commit()
+        except:
+            self.rds_conn.cancel()
 
     def add_expense(self, uid, rid, description = None, category = None, amount = None, image = None):
-        self.rds_cur.execute("SELECT MAX(eid) FROM {} where uid=%s and rid=%s".format(self.rds_expense_table), (uid, rid))
-        eid = self.rds_cur.fetchall()[0][0]
-        self.rds_conn.commit()
-        if eid is None:
-            eid = 0
+        try:
+            self.rds_cur.execute("SELECT MAX(eid) FROM {} where uid=%s and rid=%s".format(self.rds_expense_table), (uid, rid))
+            eid = self.rds_cur.fetchall()[0][0]
+            self.rds_conn.commit()
+            if eid is None:
+                eid = 0
 
-        fields = [uid, rid, int(eid) + 1]
-        fields.append(description)
-        fields.append(category)
-        fields.append(amount)
-        fields.append(image)
+            fields = [uid, rid, int(eid) + 1]
+            fields.append(description)
+            fields.append(category)
+            fields.append(amount)
+            fields.append(image)
 
-        self.rds_cur.execute("INSERT INTO {} (uid, rid, eid, description, category, amount, image) VALUES (%s, %s, %s, %s, %s, %s, %s);".format(self.rds_expense_table), tuple(fields))
-        self.rds_conn.commit()
+            self.rds_cur.execute("INSERT INTO {} (uid, rid, eid, description, category, amount, image) VALUES (%s, %s, %s, %s, %s, %s, %s);".format(self.rds_expense_table), tuple(fields))
+            self.rds_conn.commit()
+        except:
+            self.rds_conn.cancel()
 
     # Other
     def upload_image(self, object_name):

@@ -58,7 +58,7 @@ function load_reports() {
                 }
                 newNode.children[2].report_id = data[i][1];
                 newNode.children[2].onclick = function() {
-                    update_report(this.report_id);
+                    delete_report(this.report_id);
                 }
                 listNode.appendChild(newNode);
             }

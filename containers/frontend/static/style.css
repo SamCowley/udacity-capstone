@@ -87,13 +87,13 @@ body {
     width: 100%;
 }
 
-.reports_list a {
+.reports_list .report_item a {
     padding: 2px;
     text-decoration: none;
     background-color: inherit;
 }
 
-.reports_list button {
+.reports_list .report_item button {
     margin-left: auto;
     margin-right: 0;
 }

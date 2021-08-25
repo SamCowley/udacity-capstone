@@ -118,7 +118,7 @@ def create_report():
     return flask.make_response(flask.jsonify({"message": "Success"}), 201)
 
 @app.route('/expenses/list', methods=['POST'])
-def get_report_expenses(rid):
+def get_report_expenses():
     print("Requesting report expenses", flush=True)
     data = flask.request.get_json()
 

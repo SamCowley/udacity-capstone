@@ -3,8 +3,9 @@ import expenses_service
 from functools import wraps
 import flask
 from flask_cors import CORS
+import hashlib
+import itsdangerous
 import waitress
-from itsdangerous import Signer
 
 app = flask.Flask(__name__)
 # Allow client side scripts to read the session cookie
@@ -19,6 +20,17 @@ except: raise UnboundLocalError('Missing values: session_secret')
 # Service
 expenses = expenses_service.Expenses()
 signer = Signer(os.environ['session_secret'])
+
+def authenticate_token(session):
+    session_interface = flask.sessions.SecureCookieSessionInterface()
+    s = session_interface.get_signing_serializer(app)
+    max_age = int(app.permanent_session_lifetime.total_seconds())
+
+    try:
+        data = s.loads(session, max_age=max_age)
+        return data['profile']['user_id']
+    except:
+        return None
 
 def validate_arguments(*args, **kwargs):
     # Function pointer dictionary for dynamic type casting
@@ -42,22 +54,21 @@ def validate_arguments(*args, **kwargs):
 
 @app.route('/list', methods=['POST'])
 def get_all_reports():
-    try:
-        token = flask.request.args.get('token')
-        uid = str(signer.unsign(token))
-    except:
+    token = flask.request.args.get('token')
+    uid = authenticate_token(session)
+    if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
-    reports = expenses.get_all_reports(uid)
 
+    reports = expenses.get_all_reports(uid)
     return flask.make_response(flask.jsonify({"data": reports}), 200)
 
 @app.route('/delete', methods=['POST'])
 def delete_report():
-    try:
-        token = flask.request.args.get('token')
-        uid = str(signer.unsign(token))
-    except:
+    token = flask.request.args.get('token')
+    uid = authenticate_token(session)
+    if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
+
     rid = flask.request.args.get('rid')
 
     if not validate_arguments((rid, 'int', False)):
@@ -68,11 +79,11 @@ def delete_report():
 
 @app.route('/update', methods=['POST'])
 def update_report():
-    try:
-        token = flask.request.args.get('token')
-        uid = str(signer.unsign(token))
-    except:
+    token = flask.request.args.get('token')
+    uid = authenticate_token(session)
+    if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
+
     rid = flask.request.args.get('rid')
     name = flask.request.args.get('name')
 
@@ -84,11 +95,11 @@ def update_report():
 
 @app.route('/create', methods=['POST'])
 def create_report():
-    try:
-        token = flask.request.args.get('token')
-        uid = str(signer.unsign(token))
-    except:
+    token = flask.request.args.get('token')
+    uid = authenticate_token(session)
+    if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
+
     name = flask.request.args.get('name')
 
     if not validate_arguments((name, 'str', False)):
@@ -99,11 +110,11 @@ def create_report():
 
 @app.route('/expenses/list', methods=['POST'])
 def get_report_expenses(rid):
-    try:
-        token = flask.request.args.get('token')
-        uid = str(signer.unsign(token))
-    except:
+    token = flask.request.args.get('token')
+    uid = authenticate_token(session)
+    if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
+
     rid = flask.request.args.get('rid')
 
     if not validate_arguments((rid, 'int', False)):
@@ -114,11 +125,11 @@ def get_report_expenses(rid):
 
 @app.route('/expenses/delete', methods=['POST'])
 def delete_expense():
-    try:
-        token = flask.request.args.get('token')
-        uid = str(signer.unsign(token))
-    except:
+    token = flask.request.args.get('token')
+    uid = authenticate_token(session)
+    if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
+
     rid = flask.request.args.get('rid')
     eid = flask.request.args.get('eid')
 
@@ -130,13 +141,14 @@ def delete_expense():
 
 @app.route('/expenses/update', methods=['POST'])
 def update_expense():
-    try:
-        token = flask.request.args.get('token')
-        uid = str(signer.unsign(token))
-    except:
+    token = flask.request.args.get('token')
+    uid = authenticate_token(session)
+    if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
+
     rid = flask.request.args.get('rid')
     eid = flask.request.args.get('eid')
+
     description = flask.request.args.get('description')
     category = flask.request.args.get('category')
     amount = flask.request.args.get('amount')
@@ -155,13 +167,13 @@ def update_expense():
 
 @app.route('/expenses/create', methods=['POST'])
 def create_expense():
-    try:
-        token = flask.request.args.get('token')
-        uid = str(signer.unsign(token))
-    except:
+    token = flask.request.args.get('token')
+    uid = authenticate_token(session)
+    if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
     rid = flask.request.args.get('rid')
     eid = flask.request.args.get('eid')
+
     description = flask.request.args.get('description')
     category = flask.request.args.get('category')
     amount = flask.request.args.get('amount')
@@ -180,11 +192,11 @@ def create_expense():
 
 @app.route('/upload')
 def upload_image():
-    try:
-        token = flask.request.args.get('token')
-        uid = str(signer.unsign(token))
-    except:
+    token = flask.request.args.get('token')
+    uid = authenticate_token(session)
+    if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
+
     return expenses.upload_image()
 
 waitress.serve(app, host='0.0.0.0', port='8080')

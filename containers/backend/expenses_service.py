@@ -59,7 +59,7 @@ class Expenses:
 
         # Create Expense Table
         if not table_exists(self.rds_expense_table):
-            self.rds_cur.execute("CREATE TABLE {} (uid TEXT, rid INT, eid INT, description TEXT, category TEXT, amount INT, image TEXT, PRIMARY KEY (uid, rid, eid));".format(self.rds_expense_table))
+            self.rds_cur.execute("CREATE TABLE {} (uid TEXT, rid INT, eid INT, date timestamp, description TEXT, category TEXT, amount INT, image TEXT, PRIMARY KEY (uid, rid, eid));".format(self.rds_expense_table))
             self.rds_conn.commit()
 
     # Reports
@@ -125,9 +125,10 @@ class Expenses:
         self.rds_cur.execute("DELETE FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (uid, rid))
         self.rds_conn.commit()
 
-    def update_expense(self, uid, rid, eid, description, category, amount, image):
+    def update_expense(self, uid, rid, eid, date, description, category, amount, image):
         fields = []
 
+        fields.append(date)
         fields.append(description)
         fields.append(category)
         fields.append(amount)
@@ -137,13 +138,13 @@ class Expenses:
         fields.append(eid)
             
         try:
-            self.rds_cur.execute("UPDATE {} SET description=%s, category=%s, amount=%s, image=%s where uid=%s AND rid=%s AND eid=%s;".format(self.rds_expense_table), tuple(fields))
+            self.rds_cur.execute("UPDATE {} SET date=%s, description=%s, category=%s, amount=%s, image=%s where uid=%s AND rid=%s AND eid=%s;".format(self.rds_expense_table), tuple(fields))
             self.rds_conn.commit()
         except Exception as e:
             print("ERROR: " + e, flush=True)
             self.rds_conn.cancel()
 
-    def add_expense(self, uid, rid, description = None, category = None, amount = None, image = None):
+    def add_expense(self, uid, rid, date = None, description = None, category = None, amount = None, image = None):
         try:
             self.rds_cur.execute("SELECT MAX(eid) FROM {} where uid=%s and rid=%s".format(self.rds_expense_table), (uid, rid))
             eid = self.rds_cur.fetchall()[0][0]
@@ -152,12 +153,13 @@ class Expenses:
                 eid = 0
 
             fields = [uid, rid, int(eid) + 1]
+            fields.append(date)
             fields.append(description)
             fields.append(category)
             fields.append(amount)
             fields.append(image)
 
-            self.rds_cur.execute("INSERT INTO {} (uid, rid, eid, description, category, amount, image) VALUES (%s, %s, %s, %s, %s, %s, %s);".format(self.rds_expense_table), tuple(fields))
+            self.rds_cur.execute("INSERT INTO {} (uid, rid, eid, date, description, category, amount, image) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);".format(self.rds_expense_table), tuple(fields))
             self.rds_conn.commit()
         except Exception as e:
             print("ERROR: " + e, flush=True)

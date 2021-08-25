@@ -3,10 +3,67 @@
 
 {% block title %}Report{% endblock %}
 
+{% block subsection_title %}{% endblock %}
+{% block subnavbar_extra %}
+    {% if logged_in %}
+        <li><button onclick="new_expense()">Create</button></li>
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}<script>{% include 'report.js' %}</script>{% endblock %}
+
 {% block content %}
-   <div id="expenses_list">
-        {% if not logged_in %}
-            <h1>Log in to view expenses</h1>
-        {% endif %}
-   </div>
+    {% if logged_in %}
+        <div id="expenses_list">
+        </div>
+    {% else %}
+        <h1>Log in to view expenses</h1>
+    {% endif %}
+{% endblock %}
+
+{% block extra %}
+    <div class="popup">
+        <form id="new-expense">
+            <input type="date"/>
+            <input type="text" placeholder="Description" />
+            <input type="text" placeholder="Category" />
+            <input type="number" placeholder="0" />
+            <input type="file" />
+            <input type="submit" value="Create" />
+        </form>
+        <button onclick="close_popup()">Cancel</button>
+    </div>
+    
+    <div class="popup">
+        <form id="update-expense">
+            <input type="text" value="" style="display: none" />
+            <input type="date"/>
+            <input type="text" placeholder="Description" />
+            <input type="text" placeholder="Category" />
+            <input type="number" placeholder="0" />
+            <input type="file" />
+            <input type="submit" value="Update" />
+        </form>
+        <button onclick="close_popup()">Cancel</button>
+    </div>
+    
+    <div class="popup">
+        <form id="delete-expense" action="/submit">
+            <input type="text" value="" style="display: none" />
+            <input type="submit" value="Delete" />
+        </form>
+        <button onclick="close_popup()">Cancel</button>
+    </div>
+
+    <div id="templates">
+        <div class="expense_item">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <button class="update_expense">Update</button>
+            <button class="delete_expense">Delete</button>
+        </div>
+    </div>
 {% endblock %}

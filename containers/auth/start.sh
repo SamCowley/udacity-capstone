@@ -1,2 +1,2 @@
 #!/bin/sh
-python3 auth.py
+python3 -u auth.py

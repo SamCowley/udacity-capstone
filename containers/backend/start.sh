@@ -1,2 +1,2 @@
 #!/bin/sh
-python3 expenses.py
+python3 -u expenses.py

@@ -45,8 +45,8 @@ function load_reports() {
         if (xhr.readyState === 4) {
             delete_reports_list();
             var listNode = document.getElementById("reports_list")
-            var resp = JSON.parse(request.response)
-            var data = resp['data']
+            var resp = JSON.parse(xhr.response)
+            var data = resp[0]['data']
             for ( let i = 0; i < data.length; i++) {
                 var newNode = document.getElementById("report_item_template").cloneNode(true);
                 newNode.id = "";
@@ -72,13 +72,17 @@ window.onload = function() {
             const form_create_report = document.getElementById("new-report");
             event.preventDefault();
             var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    load_reports()
+                }
+            }
             xhr.open("POST", "/api/v0/report/create")
             xhr.send(JSON.stringify({
                 "token": get_session(),
                 "name": form_create_report.children[0].value
             }));
             close_popup()
-            load_reports()
         });
     }
     
@@ -87,6 +91,11 @@ window.onload = function() {
         const form_update_report = document.getElementById("update-report");
         event.preventDefault();
         var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                load_reports()
+            }
+        }
         xhr.open("POST", "/api/v0/report/update")
         xhr.send(JSON.stringify({
             "token": get_session(),
@@ -102,6 +111,11 @@ window.onload = function() {
         const form_delete_report = document.getElementById("delete-report");
         event.preventDefault();
         var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                load_reports()
+            }
+        }
         xhr.open("POST", "/api/v0/report/delete")
         xhr.send(JSON.stringify({
             "token": get_session(),

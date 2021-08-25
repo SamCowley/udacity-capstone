@@ -1,2 +1,2 @@
 #!/bin/sh
-python3 frontend.py
+python3 -u frontend.py

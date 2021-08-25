@@ -20,12 +20,12 @@ auth = auth_service.Auth0(app)
 
 @app.route('/login')
 def login():
-    print("Requesting login")
+    print("Requesting login", flush=True)
     return auth.login()
 
 @app.route('/callback')
 def callback():
-    print("Requesting callback")
+    print("Requesting callback", flush=True)
     userinfo = auth.callback()
     flask.session['profile'] = {
         'user_id': userinfo['sub'],
@@ -36,7 +36,7 @@ def callback():
 
 @app.route('/logout')
 def logout():
-    print("Requesting logout")
+    print("Requesting logout", flush=True)
     flask.session.clear()
     return flask.redirect('/')
 

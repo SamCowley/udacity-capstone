@@ -21,6 +21,7 @@ except: raise UnboundLocalError('Missing values: session_secret')
 expenses = expenses_service.Expenses()
 
 def authenticate_token(session):
+    print("Validating token: " + session, flush=True)
     session_interface = flask.sessions.SecureCookieSessionInterface()
     s = session_interface.get_signing_serializer(app)
     max_age = int(app.permanent_session_lifetime.total_seconds())
@@ -53,6 +54,7 @@ def validate_arguments(*args, **kwargs):
 
 @app.route('/list', methods=['POST'])
 def get_all_reports():
+    print("Requesting all reports", flush=True)
     token = flask.request.args.get('token')
     uid = authenticate_token(token)
     if uid is None:
@@ -63,6 +65,7 @@ def get_all_reports():
 
 @app.route('/delete', methods=['POST'])
 def delete_report():
+    print("Requesting delete report", flush=True)
     token = flask.request.args.get('token')
     uid = authenticate_token(token)
     if uid is None:
@@ -78,6 +81,7 @@ def delete_report():
 
 @app.route('/update', methods=['POST'])
 def update_report():
+    print("Requesting update report", flush=True)
     token = flask.request.args.get('token')
     uid = authenticate_token(token)
     if uid is None:
@@ -94,6 +98,7 @@ def update_report():
 
 @app.route('/create', methods=['POST'])
 def create_report():
+    print("Requesting create report", flush=True)
     token = flask.request.args.get('token')
     uid = authenticate_token(token)
     if uid is None:
@@ -109,6 +114,7 @@ def create_report():
 
 @app.route('/expenses/list', methods=['POST'])
 def get_report_expenses(rid):
+    print("Requesting report expenses", flush=True)
     token = flask.request.args.get('token')
     uid = authenticate_token(token)
     if uid is None:
@@ -124,6 +130,7 @@ def get_report_expenses(rid):
 
 @app.route('/expenses/delete', methods=['POST'])
 def delete_expense():
+    print("Requesting delete expense", flush=True)
     token = flask.request.args.get('token')
     uid = authenticate_token(token)
     if uid is None:
@@ -140,6 +147,7 @@ def delete_expense():
 
 @app.route('/expenses/update', methods=['POST'])
 def update_expense():
+    print("Requesting update expense", flush=True)
     token = flask.request.args.get('token')
     uid = authenticate_token(token)
     if uid is None:
@@ -166,6 +174,7 @@ def update_expense():
 
 @app.route('/expenses/create', methods=['POST'])
 def create_expense():
+    print("Requesting create expense", flush=True)
     token = flask.request.args.get('token')
     uid = authenticate_token(token)
     if uid is None:
@@ -191,6 +200,7 @@ def create_expense():
 
 @app.route('/upload')
 def upload_image():
+    print("Requesting upload image", flush=True)
     token = flask.request.args.get('token')
     uid = authenticate_token(token)
     if uid is None:

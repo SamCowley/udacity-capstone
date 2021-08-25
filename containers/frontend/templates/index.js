@@ -60,6 +60,7 @@ function load_reports() {
     };
 
     xhr.open("POST", "/api/v0/report/list")
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhr.send(JSON.stringify({
         "token": get_session()
     }));
@@ -78,6 +79,7 @@ window.onload = function() {
                 }
             }
             xhr.open("POST", "/api/v0/report/create")
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
             xhr.send(JSON.stringify({
                 "token": get_session(),
                 "name": form_create_report.children[0].value
@@ -97,6 +99,7 @@ window.onload = function() {
             }
         }
         xhr.open("POST", "/api/v0/report/update")
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.send(JSON.stringify({
             "token": get_session(),
             "rid": form_update_report.children[0].value,
@@ -117,6 +120,7 @@ window.onload = function() {
             }
         }
         xhr.open("POST", "/api/v0/report/delete")
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.send(JSON.stringify({
             "token": get_session(),
             "rid":  form_delete_report.children[0].value

@@ -54,7 +54,7 @@ def validate_arguments(*args, **kwargs):
 @app.route('/list', methods=['POST'])
 def get_all_reports():
     token = flask.request.args.get('token')
-    uid = authenticate_token(session)
+    uid = authenticate_token(token)
     if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
 
@@ -64,7 +64,7 @@ def get_all_reports():
 @app.route('/delete', methods=['POST'])
 def delete_report():
     token = flask.request.args.get('token')
-    uid = authenticate_token(session)
+    uid = authenticate_token(token)
     if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
 
@@ -79,7 +79,7 @@ def delete_report():
 @app.route('/update', methods=['POST'])
 def update_report():
     token = flask.request.args.get('token')
-    uid = authenticate_token(session)
+    uid = authenticate_token(token)
     if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
 
@@ -95,7 +95,7 @@ def update_report():
 @app.route('/create', methods=['POST'])
 def create_report():
     token = flask.request.args.get('token')
-    uid = authenticate_token(session)
+    uid = authenticate_token(token)
     if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
 
@@ -110,7 +110,7 @@ def create_report():
 @app.route('/expenses/list', methods=['POST'])
 def get_report_expenses(rid):
     token = flask.request.args.get('token')
-    uid = authenticate_token(session)
+    uid = authenticate_token(token)
     if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
 
@@ -125,7 +125,7 @@ def get_report_expenses(rid):
 @app.route('/expenses/delete', methods=['POST'])
 def delete_expense():
     token = flask.request.args.get('token')
-    uid = authenticate_token(session)
+    uid = authenticate_token(token)
     if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
 
@@ -141,7 +141,7 @@ def delete_expense():
 @app.route('/expenses/update', methods=['POST'])
 def update_expense():
     token = flask.request.args.get('token')
-    uid = authenticate_token(session)
+    uid = authenticate_token(token)
     if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
 
@@ -167,7 +167,7 @@ def update_expense():
 @app.route('/expenses/create', methods=['POST'])
 def create_expense():
     token = flask.request.args.get('token')
-    uid = authenticate_token(session)
+    uid = authenticate_token(token)
     if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
     rid = flask.request.args.get('rid')
@@ -192,7 +192,7 @@ def create_expense():
 @app.route('/upload')
 def upload_image():
     token = flask.request.args.get('token')
-    uid = authenticate_token(session)
+    uid = authenticate_token(token)
     if uid is None:
         return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
 

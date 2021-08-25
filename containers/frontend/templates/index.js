@@ -33,10 +33,10 @@ function delete_reports_list() {
 }
 
 function get_session() {
-    all_cookies = document.cookie
-    match = all_cookies.match(new RegExp('(^| )session=([^;]+)')
+    all_cookies = document.cookie;
+    match = all_cookies.match(new RegExp('(^| )session=([^;]+)'));
     if (match) return match[2];
-    return ''
+    return '';
 }
 
 function load_reports() {

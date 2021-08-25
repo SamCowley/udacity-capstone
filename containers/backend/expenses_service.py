@@ -71,7 +71,8 @@ class Expenses:
                 res.append(item)
             self.rds_conn.commit()
             return res
-        except:
+        except Exception as e:
+            print("ERROR: " + e, flush=True)
             self.rds_conn.cancel()
             return None
 
@@ -80,14 +81,16 @@ class Expenses:
             self.rds_cur.execute("DELETE FROM {} where uid=%s AND rid=%s;".format(self.rds_report_table), (uid, rid))
             self.rds_cur.execute("DELETE FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (uid, rid))
             self.rds_conn.commit()
-        except:
+        except Exception as e:
+            print("ERROR: " + e, flush=True)
             self.rds_conn.cancel()
 
     def update_report(self, uid, rid, name):
         try:
-            self.rds_cur.execute("UPDATE SET name = %s FROM {} where uid=%s AND rid=%s;".format(self.rds_report_table), (name, uid, rid))
+            self.rds_cur.execute("UPDATE {} SET name=%s where uid=%s AND rid=%s;".format(self.rds_report_table), (name, uid, rid))
             self.rds_conn.commit()
-        except:
+        except Exception as e:
+            print("ERROR: " + e, flush=True)
             self.rds_conn.cancel()
 
     def add_report(self, uid, name):
@@ -100,7 +103,8 @@ class Expenses:
 
             self.rds_cur.execute("INSERT INTO {} (uid, rid, name) VALUES (%s, %s, %s);".format(self.rds_report_table), (uid, int(rid) + 1, name))
             self.rds_conn.commit()
-        except:
+        except Exception as e:
+            print("ERROR: " + e, flush=True)
             self.rds_conn.cancel()
 
     # Expenses
@@ -112,7 +116,8 @@ class Expenses:
                 res.append(item)
             self.rds_conn.commit()
             return res
-        except:
+        except Exception as e:
+            print("ERROR: " + e, flush=True)
             self.rds_conn.cancel()
             return None
 
@@ -123,22 +128,19 @@ class Expenses:
     def update_expense(self, uid, rid, eid, description, category, amount, image):
         fields = []
 
-        fields.append("description")
         fields.append(description)
-        fields.append("category")
         fields.append(category)
-        fields.append("amount")
         fields.append(amount)
-        fields.append("image")
         fields.append(image)
         fields.append(uid)
         fields.append(rid)
         fields.append(eid)
             
         try:
-            self.rds_cur.execute("UPDATE SET {} FROM {} where uid=%s AND rid=%s AND eid=%s;".format(", ".join(["%s=%s"]*(len(fields) - 3)/2), self.rds_expense_table), tuple(fields))
+            self.rds_cur.execute("UPDATE {} SET description=%s, category=%s, amount=%s, image=%s where uid=%s AND rid=%s AND eid=%s;".format(self.rds_expense_table), tuple(fields))
             self.rds_conn.commit()
-        except:
+        except Exception as e:
+            print("ERROR: " + e, flush=True)
             self.rds_conn.cancel()
 
     def add_expense(self, uid, rid, description = None, category = None, amount = None, image = None):
@@ -157,7 +159,8 @@ class Expenses:
 
             self.rds_cur.execute("INSERT INTO {} (uid, rid, eid, description, category, amount, image) VALUES (%s, %s, %s, %s, %s, %s, %s);".format(self.rds_expense_table), tuple(fields))
             self.rds_conn.commit()
-        except:
+        except Exception as e:
+            print("ERROR: " + e, flush=True)
             self.rds_conn.cancel()
 
     # Other

@@ -21,15 +21,18 @@ except: raise UnboundLocalError('Missing values: session_secret')
 expenses = expenses_service.Expenses()
 
 def authenticate_token(session):
-    print("Validating token: " + str(session), flush=True)
+    print("Validating token", flush=True)
     session_interface = flask.sessions.SecureCookieSessionInterface()
     s = session_interface.get_signing_serializer(app)
     max_age = int(app.permanent_session_lifetime.total_seconds())
 
     try:
         data = s.loads(session, max_age=max_age)
-        return data['profile']['user_id']
+        uid = data['profile']['user_id']
+        print("Authentication success", flush=True)
+        return uid
     except:
+        print("Authentication failed", flush=True)
         return None
 
 def validate_arguments(*args, **kwargs):
@@ -42,7 +45,7 @@ def validate_arguments(*args, **kwargs):
         allow_none = arg[2]
 
         # Continue if value is None and it's allowed
-        if value is None and allow_none:
+        if ( value is None or value == "" ) and allow_none:
             continue
 
         # Check type casting to the correct value causes an error (all values are passed in as strings)

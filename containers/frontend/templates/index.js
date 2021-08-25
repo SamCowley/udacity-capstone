@@ -52,8 +52,14 @@ function load_reports() {
                 newNode.id = "";
                 newNode.children[0].textContent = data[i][2];
                 newNode.children[0].href = "/report/" + data[i][1];
-                newNode.children[1].onclick = "update_report(" + data[i][1] + ")";
-                newNode.children[2].onclick = "delete_report(" + data[i][1] + ")";
+                newNode.children[1].report_id = data[i][1];
+                newNode.children[1].onclick = function() { 
+                    update_report(this.report_id);
+                }
+                newNode.children[2].report_id = data[i][1];
+                newNode.children[2].onclick = function() {
+                    update_report(this.report_id);
+                }
                 listNode.appendChild(newNode);
             }
         }

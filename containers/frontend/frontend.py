@@ -6,7 +6,12 @@ import waitress
 import os
 
 app = flask.Flask(__name__)
+# Allow client side scripts to read the session cookie
+app.config['SESSION_COOKIE_HTTPONLY'] = False
+# Allow CORS requests
 CORS(app)
+
+# Get PSK
 try: app.secret_key = os.environ['session_secret']
 except: raise UnboundLocalError('Missing values: session_secret')
 

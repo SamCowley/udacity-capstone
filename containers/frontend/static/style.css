@@ -70,6 +70,8 @@ body {
 .subnavbar_extra ul {
     list-style-type: none;
     margin: 0;
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
 .subnavbar_extra ul li {
@@ -81,21 +83,23 @@ body {
 }
 
 /* Report List */
-.reports_list {
+#reports_list {
     margin: 0;
     padding: 0;
     width: 100%;
 }
 
-.reports_list .report_item a {
+#reports_list .report_item {
     padding: 2px;
+}
+
+#reports_list .report_item a {
     text-decoration: none;
     background-color: inherit;
 }
 
-.reports_list .report_item button {
-    margin-left: auto;
-    margin-right: 0;
+#reports_list .report_item button {
+    float: right;
 }
 
 /* Popups */

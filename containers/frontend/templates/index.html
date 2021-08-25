@@ -13,11 +13,12 @@
 {% block scripts %}<script>{% include 'index.js' %}</script>{% endblock %}
 
 {% block content %}
-    <div id="reports_list">
-        {% if not logged_in %}
-            <h1>Log in to view reports</h1>
-        {% endif %}
-    </div>
+    {% if logged_in %}
+        <div id="reports_list">
+        </div>
+    {% else %}
+        <h1>Log in to view reports</h1>
+    {% endif %}
 {% endblock %}
 
 {% block extra %}

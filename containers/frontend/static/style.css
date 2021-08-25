@@ -83,22 +83,26 @@ body {
 }
 
 /* Report List */
-#reports_list {
+#reports_list,
+#expenses_list {
     margin: 0;
     padding: 0;
     width: 100%;
 }
 
-#reports_list .report_item {
+#reports_list .report_item,
+#expenses_list .expense_item {
     padding: 2px;
 }
 
-#reports_list .report_item a {
+#reports_list .report_item a,
+#expenses_list .expense_item a {
     text-decoration: none;
     background-color: inherit;
 }
 
-#reports_list .report_item button {
+#reports_list .report_item button,
+#expenses_list .expense_item button, {
     float: right;
 }
 

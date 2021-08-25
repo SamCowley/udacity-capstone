@@ -44,9 +44,9 @@ def validate_arguments(*args, **kwargs):
         arg_type = arg[1]
         allow_none = arg[2]
 
-        # Continue if value is None and it's allowed
-        if ( value is None or value == "" ) and allow_none:
-            continue
+        # Fail if a value is empty and shouldn't be
+        if ( value is None or value == "" ) and not allow_none:
+            return False
 
         # Check type casting to the correct value causes an error (all values are passed in as strings)
         try:

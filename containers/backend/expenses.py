@@ -118,4 +118,19 @@ def create_expense():
 
     return flask.make_response(flask.jsonify({"message": "Success"}), 201)
 
+@app.route('/expenses/upload', methods=['POST'])
+def create_expense():
+    print("Requesting create expense", flush=True)
+
+    data = flask.args.get('metadata')
+    print(str(data))
+    files = flask.request.files
+    print(files)
+    item = expenses_service.ExpenseItem(app, data)
+    if not item.validate_token():  return auth_fail()
+    if not item.validate_upload(): return param_fail()
+    expenses.upload_expense(item)
+
+    return flask.make_response(flask.jsonify({"message": "Success"}), 201)
+
 waitress.serve(app, host='0.0.0.0', port='8080')

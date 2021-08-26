@@ -29,7 +29,7 @@ function close_popup() {
 
 function delete_expenses_list() {
     const expenses_list = document.getElementById("expenses_list")
-    while (expenses_list.children.length > 2) {
+    while (expenses_list.children.length > 1) {
         expenses_list.removeChild(expenses_list.children[1]);
     }
 }
@@ -111,8 +111,7 @@ window.onload = function() {
                 "date": form_create_expense.children[0].value,
                 "description": form_create_expense.children[1].value,
                 "category": form_create_expense.children[2].value,
-                "amount": form_create_expense.children[3].value,
-                "image": form_create_expense.children[4].value
+                "amount": form_create_expense.children[3].value
             }));
             close_popup()
         });
@@ -137,12 +136,11 @@ window.onload = function() {
             "date": form_update_expense.children[1].value,
             "description": form_update_expense.children[2].value,
             "category": form_update_expense.children[3].value,
-            "amount": form_update_expense.children[4].value,
-            "image": form_update_expense.children[5].value
+            "amount": form_update_expense.children[4].value
         }));
         close_popup()
     });
-    
+
     const form_delete_expense = document.getElementById("delete-expense");
     form_delete_expense.addEventListener("submit", function(event) {
         const form_delete_expense = document.getElementById("delete-expense");
@@ -163,5 +161,29 @@ window.onload = function() {
         close_popup()
     });
 
-    load_expenses()
+    const form_upload_expense = document.getElementById("upload-expense");
+    form_update_expense.addEventListener("submit", function(event) {
+        const form_update_expense = document.getElementById("upload-expense");
+        event.preventDefault();
+        var xhr = new XMLHttpRequest();
+        var formData = new FormData();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                load_expenses();
+            }
+        }
+        xhr.open("POST", "/api/v0/report/expenses/upload");
+        xhr.setRequestHeader("Content-Type", "multipart/form-data");
+        formData.append("file", form_update_expense.children[1].files[0])
+        formData.append("metadata", JSON.stringify({
+            "token": get_session(),
+            "rid": window.location.pathname.split('/')[2],
+            "eid": form_update_expense.children[0].value
+        }));
+        xhr.send(formData);
+        close_popup();
+    });
+    
+
+    load_expenses();
 };

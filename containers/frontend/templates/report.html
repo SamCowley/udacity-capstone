@@ -35,7 +35,6 @@
             <input type="text" placeholder="Description" />
             <input type="text" placeholder="Category" />
             <input type="number" placeholder="0.00" step="0.01" />
-            <input type="file" />
             <input type="submit" value="Create" />
         </form>
         <button onclick="close_popup()">Cancel</button>
@@ -48,7 +47,6 @@
             <input type="text" placeholder="Description" />
             <input type="text" placeholder="Category" />
             <input type="number" placeholder="0.00" step="0.01" />
-            <input type="file" />
             <input type="submit" value="Update" />
         </form>
         <button onclick="close_popup()">Cancel</button>
@@ -57,6 +55,15 @@
     <div class="popup">
         <form id="delete-expense" action="/submit">
             <input type="text" value="" style="display: none" />
+            <input type="submit" value="Delete" />
+        </form>
+        <button onclick="close_popup()">Cancel</button>
+    </div>
+
+    <div class="popup">
+        <form id="upload-expense" action="/submit">
+            <input type="text" value="" style="display: none" />
+            <input type="file" />
             <input type="submit" value="Delete" />
         </form>
         <button onclick="close_popup()">Cancel</button>

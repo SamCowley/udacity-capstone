@@ -100,9 +100,13 @@ body {
     padding: 2px;
 }
 
+
 #reports_list tr .header,
+#expenses_list tr .header {
+    padding-right: 10px;
+}
+
 #reports_list .report_item .name,
-#expenses_list tr .header,
 #expenses_list .expense_item .date,
 #expenses_list .expense_item .description,
 #expenses_list .expense_item .category,

@@ -1,10 +1,7 @@
 import os
 import expenses_service
-from functools import wraps
 import flask
 from flask_cors import CORS
-import hashlib
-import itsdangerous
 import waitress
 
 app = flask.Flask(__name__)
@@ -29,63 +26,48 @@ def param_fail():
 @app.route('/list', methods=['POST'])
 def get_all_reports():
     print("Requesting all reports", flush=True)
+
     data = flask.request.get_json()
+    item = ReportItem(app, data)
+    if not item.validate_token(): return auth_fail()
+    if not item.validate_list():  return param_fail()
+    reports = expenses.get_all_reports(item)
 
-    uid = authenticate_token(data["token"])
-    if uid is None:
-        return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
-
-    reports = expenses.get_all_reports(uid)
     return flask.make_response(flask.jsonify({"data": reports}), 200)
 
 @app.route('/delete', methods=['POST'])
 def delete_report():
     print("Requesting delete report", flush=True)
+
     data = flask.request.get_json()
+    item = ReportItem(app, data)
+    if not item.validate_token():  return auth_fail()
+    if not item.validate_delete(): return param_fail()
+    expenses.delete_report(item)
 
-    uid = authenticate_token(data["token"])
-    if uid is None:
-        return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
-    rid = data["rid"]
-
-    if not validate_arguments((rid, 'int', False)):
-        return flask.make_response(flask.jsonify({"message": "Invalid parameters"}, 400))
-
-    expenses.delete_report(uid, rid)
     return flask.make_response(flask.jsonify({"message": "Success"}), 200)
 
 @app.route('/update', methods=['POST'])
 def update_report():
     print("Requesting update report", flush=True)
+
     data = flask.request.get_json()
+    item = ReportItem(app, data)
+    if not item.validate_token():  return auth_fail()
+    if not item.validate_update(): return param_fail()
+    expenses.update_report(item)
 
-    uid = authenticate_token(data["token"])
-    if uid is None:
-        return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
-
-    rid = data["rid"]
-    name = data["name"]
-
-    if not validate_arguments((rid, 'int', False), (name, 'str', False)):
-        return flask.make_response(flask.jsonify({"message": "Invalid parameters"}, 400))
-
-    expenses.update_report(uid, rid, name)
     return flask.make_response(flask.jsonify({"message": "Success"}), 200)
 
 @app.route('/create', methods=['POST'])
 def create_report():
     print("Requesting create report", flush=True)
+
     data = flask.request.get_json()
-
-    uid = authenticate_token(data["token"])
-    if uid is None:
-        return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
-    name = data["name"]
-
-    if not validate_arguments((name, 'str', False)):
-        return flask.make_response(flask.jsonify({"message": "Invalid parameters"}, 400))
-
-    expenses.add_report(uid, name)
+    item = ReportItem(app, data)
+    if not item.validate_token():  return auth_fail()
+    if not item.validate_create(): return param_fail()
+    expenses.add_report(item)
     return flask.make_response(flask.jsonify({"message": "Success"}), 201)
 
 @app.route('/expenses/list', methods=['POST'])

@@ -43,6 +43,31 @@ class RequestItem:
                 return False
         return True
 
+class ReportItem(RequestItem):
+    def __init__(self, app, data):
+        self.app = app
+        self.token = data['token']
+        self.uid = ''
+        self.rid = data['rid']
+        self.name = data['name']
+
+        self.var_map = {
+            'rid':  [ 'int',   False, self.rid ],
+            'name': [ 'str',   True,  self.name ]
+        }
+
+    def validate_list(self):
+        return True
+        
+    def validate_delete(self):
+        return validate_arguments('rid')
+
+    def validate_update(self):
+        return validate_arguments('rid', 'name')
+
+    def validate_create(self):
+        return validate_arguments('rid', 'name')
+
 class ExpenseItem(RequestItem):
     def __init__(self, app, data):
         self.app = app
@@ -74,7 +99,7 @@ class ExpenseItem(RequestItem):
             'rid',
             'eid')
 
-    def validate_create(self):
+    def validate_update(self):
         return validate_arguments(
             'rid',
             'eid',
@@ -84,7 +109,7 @@ class ExpenseItem(RequestItem):
             'amount',
             'image')
 
-    def validate_update(self):
+    def validate_create(self):
         return validate_arguments(
             'rid',
             'eid',
@@ -155,7 +180,8 @@ class Expenses:
             self.rds_conn.commit()
 
     # Reports
-    def get_all_reports(self, uid):
+    def get_all_reports(self, item):
+        uid = item.uid
         try:
             self.rds_cur.execute("SELECT * FROM {} where uid=%s;".format(self.rds_report_table), (uid,))
             res = []
@@ -168,7 +194,9 @@ class Expenses:
             self.rds_conn.cancel()
             return None
 
-    def delete_report(self, uid, rid):
+    def delete_report(self, item):
+        uid = item.uid
+        rid = item.rid
         try:
             self.rds_cur.execute("DELETE FROM {} where uid=%s AND rid=%s;".format(self.rds_report_table), (uid, rid))
             self.rds_cur.execute("DELETE FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (uid, rid))
@@ -177,7 +205,10 @@ class Expenses:
             print("ERROR: " + e, flush=True)
             self.rds_conn.cancel()
 
-    def update_report(self, uid, rid, name):
+    def update_report(self, item):
+        uid = item.uid
+        rid = item.rid
+        name = item.name
         try:
             self.rds_cur.execute("UPDATE {} SET name=%s where uid=%s AND rid=%s;".format(self.rds_report_table), (name, uid, rid))
             self.rds_conn.commit()
@@ -185,7 +216,9 @@ class Expenses:
             print("ERROR: " + e, flush=True)
             self.rds_conn.cancel()
 
-    def add_report(self, uid, name):
+    def add_report(self, item):
+        uid = item.uid
+        name = item.name
         try:
             self.rds_cur.execute("SELECT MAX(rid) FROM {} where uid=%s".format(self.rds_report_table), (uid,))
             rid = self.rds_cur.fetchall()[0][0]

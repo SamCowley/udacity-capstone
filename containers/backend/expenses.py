@@ -28,7 +28,7 @@ def get_all_reports():
     print("Requesting all reports", flush=True)
 
     data = flask.request.get_json()
-    item = ReportItem(app, data)
+    item = expenses_service.ReportItem(app, data)
     if not item.validate_token(): return auth_fail()
     if not item.validate_list():  return param_fail()
     reports = expenses.get_all_reports(item)
@@ -40,7 +40,7 @@ def delete_report():
     print("Requesting delete report", flush=True)
 
     data = flask.request.get_json()
-    item = ReportItem(app, data)
+    item = expenses_service.ReportItem(app, data)
     if not item.validate_token():  return auth_fail()
     if not item.validate_delete(): return param_fail()
     expenses.delete_report(item)
@@ -52,7 +52,7 @@ def update_report():
     print("Requesting update report", flush=True)
 
     data = flask.request.get_json()
-    item = ReportItem(app, data)
+    item = expenses_service.ReportItem(app, data)
     if not item.validate_token():  return auth_fail()
     if not item.validate_update(): return param_fail()
     expenses.update_report(item)
@@ -64,7 +64,7 @@ def create_report():
     print("Requesting create report", flush=True)
 
     data = flask.request.get_json()
-    item = ReportItem(app, data)
+    item = expenses_service.ReportItem(app, data)
     if not item.validate_token():  return auth_fail()
     if not item.validate_create(): return param_fail()
     expenses.add_report(item)
@@ -75,7 +75,7 @@ def get_report_expenses():
     print("Requesting report expenses", flush=True)
 
     data = flask.request.get_json()
-    item = ExpenseItem(app, data)
+    item = expenses_service.ExpenseItem(app, data)
     if not item.validate_token(): return auth_fail()
     if not item.validate_list():  return param_fail()
     resp = expenses.get_expenses(item)
@@ -87,7 +87,7 @@ def delete_expense():
     print("Requesting delete expense", flush=True)
 
     data = flask.request.get_json()
-    item = ExpenseItem(app, data)
+    item = expenses_service.ExpenseItem(app, data)
     if not item.validate_token():  return auth_fail()
     if not item.validate_delete(): return param_fail()
     expenses.delete_expense(item)
@@ -99,7 +99,7 @@ def update_expense():
     print("Requesting update expense", flush=True)
 
     data = flask.request.get_json()
-    item = ExpenseItem(app, data)
+    item = expenses_service.ExpenseItem(app, data)
     if not item.validate_token():  return auth_fail()
     if not item.validate_update(): return param_fail()
     expenses.update_expense(item)
@@ -111,7 +111,7 @@ def create_expense():
     print("Requesting create expense", flush=True)
 
     data = flask.request.get_json()
-    item = ExpenseItem(app, data)
+    item = expenses_service.ExpenseItem(app, data)
     if not item.validate_token():  return auth_fail()
     if not item.validate_create(): return param_fail()
     expenses.add_expense(item)

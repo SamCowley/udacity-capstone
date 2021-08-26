@@ -69,7 +69,7 @@ class ReportItem(RequestItem):
         return self.validate_arguments('name')
 
 class ExpenseItem(RequestItem):
-    def __init__(self, app, data):
+    def __init__(self, app, data, image = None):
         self.app = app
         self.token = data.get('token')
         self.uid = ''
@@ -79,7 +79,7 @@ class ExpenseItem(RequestItem):
         self.description = data.get('description')
         self.category = data.get('category')
         self.amount = data.get('amount')
-        self.image = data.get('image')
+        self.image = image
 
         self.var_map = {
             'rid':         [ 'int',   False, self.rid ],
@@ -87,8 +87,7 @@ class ExpenseItem(RequestItem):
             'date':        [ 'str',   False, self.date ],
             'description': [ 'str',   False, self.description ],
             'category':    [ 'str',   True,  self.category ],
-            'amount':      [ 'float', False, self.amount ],
-            'image':       [ 'str',   True,  self.image ]
+            'amount':      [ 'float', False, self.amount ]
         }
 
     def validate_list(self):
@@ -98,10 +97,13 @@ class ExpenseItem(RequestItem):
         return self.validate_arguments('rid', 'eid')
 
     def validate_update(self):
-        return self.validate_arguments('rid', 'eid', 'date', 'description', 'category', 'amount', 'image')
+        return self.validate_arguments('rid', 'eid', 'date', 'description', 'category', 'amount')
 
     def validate_create(self):
-        return self.validate_arguments('rid', 'date', 'description', 'category', 'amount', 'image')
+        return self.validate_arguments('rid', 'date', 'description', 'category', 'amount')
+
+    def validate_upload(self):
+        return self.validate_arguments('rid', 'eid') and self.image is not None
 
 class Expenses:
     def __init__(self):

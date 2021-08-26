@@ -179,7 +179,6 @@ window.onload = function() {
             }
         }
         xhr.open("POST", "/api/v0/report/expenses/upload");
-        xhr.setRequestHeader("Content-Type", "multipart/form-data");
         var formData = new FormData(form_upload_expense);
         formData.append("metadata", JSON.stringify({
             "token": get_session(),

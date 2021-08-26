@@ -122,7 +122,7 @@ def create_expense():
 def upload_expense():
     print("Requesting create expense", flush=True)
 
-    data = flask.jsonify(flask.request.form.get('metadata'))
+    data = flask.request.form.get('metadata')
     try:
         print(flask.request.files.keys())
         file = flask.request.files['file']

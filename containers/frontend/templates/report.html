@@ -14,8 +14,15 @@
 
 {% block content %}
     {% if logged_in %}
-        <div id="expenses_list">
-        </div>
+        <table id="expenses_list">
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Image</th>
+                <th></th>
+        </table>
     {% else %}
         <h1>Log in to view expenses</h1>
     {% endif %}
@@ -56,15 +63,17 @@
     </div>
 
     <div id="templates">
-        <div class="expense_item">
-            <div class="date"></div>
-            <div class="description"></div>
-            <div class="category"></div>
-            <div class="amount"></div>
-            <div class="image"></div>
-            <button class="upload_receipt">Upload</button>
-            <button class="update_expense">Update</button>
-            <button class="delete_expense">Delete</button>
-        </div>
+        <tr class="expense_item">
+            <td class="date"></td>
+            <td class="description"></td>
+            <td class="category"></td>
+            <td class="amount"></td>
+            <td class="image"></td>
+            <td>
+                <button class="upload_receipt">Upload</button>
+                <button class="update_expense">Update</button>
+                <button class="delete_expense">Delete</button>
+            </td>
+        </tr>
     </div>
 {% endblock %}

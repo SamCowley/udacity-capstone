@@ -57,12 +57,16 @@ function load_expenses() {
                 newNode.children[2].textContent = data[i][5];
                 newNode.children[3].textContent = data[i][6];
                 newNode.children[4].textContent = data[i][7];
-                newNode.children[5].expense_id = data[i][2];
-                newNode.children[5].onclick = function() { 
+                newNode.children[5][0].expense_id = data[i][2];
+                newNode.children[5][0].onclick = function() { 
+                    upload_expense(this.expense_id);
+                }
+                newNode.children[5][1].expense_id = data[i][2];
+                newNode.children[5][1].onclick = function() {
                     update_expense(this.expense_id);
                 }
-                newNode.children[6].expense_id = data[i][2];
-                newNode.children[6].onclick = function() {
+                newNode.children[5][2].expense_id = data[i][2];
+                newNode.children[5][2].onclick = function() {
                     delete_expense(this.expense_id);
                 }
                 listNode.appendChild(newNode);
@@ -121,14 +125,13 @@ window.onload = function() {
             "token": get_session(),
             "rid": window.location.pathname.split('/')[2],
             "eid": form_update_expense.children[0].value,
-            "date": form_create_expense.children[1].value,
-            "description": form_create_expense.children[2].value,
-            "category": form_create_expense.children[3].value,
-            "amount": form_create_expense.children[4].value,
-            "image": form_create_expense.children[5].value
+            "date": form_update_expense.children[1].value,
+            "description": form_update_expense.children[2].value,
+            "category": form_update_expense.children[3].value,
+            "amount": form_update_expense.children[4].value,
+            "image": form_update_expense.children[5].value
         }));
         close_popup()
-        load_expenses()
     });
     
     const form_delete_expense = document.getElementById("delete-expense");
@@ -149,7 +152,6 @@ window.onload = function() {
             "eid":  form_delete_expense.children[0].value
         }));
         close_popup()
-        load_expenses()
     });
 
     load_expenses()

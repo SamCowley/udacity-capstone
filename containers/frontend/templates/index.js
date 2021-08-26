@@ -52,14 +52,14 @@ function load_reports() {
             for ( let i = 0; i < data.length; i++) {
                 var newNode = document.getElementById("templates").children[0].cloneNode(true);
                 newNode.id = "";
-                newNode.children[0].textContent = data[i][2];
-                newNode.children[0].href = "/report/" + data[i][1];
-                newNode.children[1].report_id = data[i][1];
-                newNode.children[1].onclick = function() { 
+                newNode.children[0][0].textContent = data[i][2];
+                newNode.children[0][0].href = "/report/" + data[i][1];
+                newNode.children[1][0].report_id = data[i][1];
+                newNode.children[1][0].onclick = function() { 
                     update_report(this.report_id);
                 }
-                newNode.children[2].report_id = data[i][1];
-                newNode.children[2].onclick = function() {
+                newNode.children[1][1].report_id = data[i][1];
+                newNode.children[1][1].onclick = function() {
                     delete_report(this.report_id);
                 }
                 listNode.appendChild(newNode);

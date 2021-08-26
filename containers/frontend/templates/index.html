@@ -14,8 +14,12 @@
 
 {% block content %}
     {% if logged_in %}
-        <div id="reports_list">
-        </div>
+        <table id="reports_list">
+            <tr>
+                <th>Name</th>
+                <th></th>
+            </tr>
+        </table>
     {% else %}
         <h1>Log in to view reports</h1>
     {% endif %}
@@ -48,10 +52,14 @@
     </div>
 
     <div id="templates">
-        <div class="report_item">
-            <a></a>
-            <button class="update_report">Update</button>
-            <button class="delete_report">Delete</button>
-        </div>
+        <tr class="report_item">
+            <td>
+                <a></a>
+            </td>
+            <td>
+                <button class="update_report">Update</button>
+                <button class="delete_report">Delete</button>
+            </td>
+        </tr>
     </div>
 {% endblock %}

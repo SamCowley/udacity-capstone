@@ -15,7 +15,7 @@ class RequestItem:
         max_age = int(self.app.permanent_session_lifetime.total_seconds())
 
         try:
-            data = s.loads(session, max_age=max_age)
+            data = s.loads(self.token, max_age=max_age)
             self.uid = data['profile']['user_id']
             print("Authentication success", flush=True)
             return True
@@ -46,10 +46,10 @@ class RequestItem:
 class ReportItem(RequestItem):
     def __init__(self, app, data):
         self.app = app
-        self.token = data['token']
+        self.token = data.get('token')
         self.uid = ''
-        self.rid = data['rid']
-        self.name = data['name']
+        self.rid = data.get('rid')
+        self.name = data.get('name')
 
         self.var_map = {
             'rid':  [ 'int',   False, self.rid ],
@@ -71,15 +71,15 @@ class ReportItem(RequestItem):
 class ExpenseItem(RequestItem):
     def __init__(self, app, data):
         self.app = app
-        self.token = data['token']
+        self.token = data.get('token')
         self.uid = ''
-        self.rid = data['rid']
-        self.eid = data['eid']
-        self.date = data['date']
-        self.description = data['description']
-        self.category = data['category']
-        self.amount = data['amount']
-        self.image = data['image']
+        self.rid = data.get('rid')
+        self.eid = data.get('eid')
+        self.date = data.get('date')
+        self.description = data.get('description')
+        self.category = data.get('category')
+        self.amount = data.get('amount')
+        self.image = data.get('image')
 
         self.var_map = {
             'rid':         [ 'int',   False, self.rid ],

@@ -122,15 +122,12 @@ def create_expense():
 def upload_expense():
     print("Requesting create expense", flush=True)
 
+    data = flask.jsonify(flask.request.form.get('metadata'))
     try:
-        data = flask.jsonify(flask.request.form.get('metadata'))
-    except Exception as e:
-        print("ERROR: " + e)
-        data = None
-    try:
+        print(flask.request.files.keys())
         file = flask.request.files['file']
     except Exception as e:
-        print("ERROR: " + e)
+        print("ERROR: " + str(e))
         file = None
     item = expenses_service.ExpenseItem(app, data, file)
     if not item.validate_token():  return auth_fail()

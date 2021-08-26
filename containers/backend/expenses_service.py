@@ -66,7 +66,7 @@ class ReportItem(RequestItem):
         return self.validate_arguments('rid', 'name')
 
     def validate_create(self):
-        return self.validate_arguments('rid', 'name')
+        return self.validate_arguments('name')
 
 class ExpenseItem(RequestItem):
     def __init__(self, app, data):
@@ -101,7 +101,7 @@ class ExpenseItem(RequestItem):
         return self.validate_arguments('rid', 'eid', 'date', 'description', 'category', 'amount', 'image')
 
     def validate_create(self):
-        return self.validate_arguments('rid', 'eid', 'date', 'description', 'category', 'amount', 'image')
+        return self.validate_arguments('rid', 'date', 'description', 'category', 'amount', 'image')
 
 class Expenses:
     def __init__(self):

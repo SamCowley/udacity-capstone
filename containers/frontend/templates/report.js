@@ -121,11 +121,11 @@ window.onload = function() {
             "token": get_session(),
             "rid": window.location.pathname.split('/')[2],
             "eid": form_update_expense.children[0].value,
-            "date": form_create_expense.children[0].value,
-            "description": form_create_expense.children[1].value,
-            "category": form_create_expense.children[2].value,
-            "amount": form_create_expense.children[3].value,
-            "image": form_create_expense.children[4].value
+            "date": form_create_expense.children[1].value,
+            "description": form_create_expense.children[2].value,
+            "category": form_create_expense.children[3].value,
+            "amount": form_create_expense.children[4].value,
+            "image": form_create_expense.children[5].value
         }));
         close_popup()
         load_expenses()

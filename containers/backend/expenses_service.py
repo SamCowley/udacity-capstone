@@ -23,7 +23,7 @@ class RequestItem:
             print("Authentication failed", flush=True)
             return False
 
-    def validate_arguments(*args, **kwargs):
+    def validate_arguments(self, *args, **kwargs):
         # Function pointer dictionary for dynamic type casting
         cast = {'int': int, 'float': float, 'str': str}
     

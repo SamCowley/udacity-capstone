@@ -169,8 +169,8 @@ window.onload = function() {
     });
 
     const form_upload_expense = document.getElementById("upload-expense");
-    form_update_expense.addEventListener("submit", function(event) {
-        const form_update_expense = document.getElementById("upload-expense");
+    form_upload_expense.addEventListener("submit", function(event) {
+        const form_upload_expense = document.getElementById("upload-expense");
         event.preventDefault();
         var xhr = new XMLHttpRequest();
         var formData = new FormData();
@@ -181,11 +181,11 @@ window.onload = function() {
         }
         xhr.open("POST", "/api/v0/report/expenses/upload");
         xhr.setRequestHeader("Content-Type", "multipart/form-data");
-        formData.append("file", form_update_expense.children[1].files[0])
+        formData.append("file", form_upload_expense.children[1].files[0])
         formData.append("metadata", JSON.stringify({
             "token": get_session(),
             "rid": window.location.pathname.split('/')[2],
-            "eid": form_update_expense.children[0].value
+            "eid": form_upload_expense.children[0].value
         }));
         xhr.send(formData);
         close_popup();

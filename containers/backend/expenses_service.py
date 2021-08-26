@@ -238,7 +238,7 @@ class Expenses:
         rid = item.rid
         eid = item.eid
 
-        self.rds_cur.execute("DELETE FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (uid, rid))
+        self.rds_cur.execute("DELETE FROM {} where uid=%s and rid=%s and eid=%s;".format(self.rds_expense_table), (uid, rid, eid))
         self.rds_conn.commit()
 
     def update_expense(self, item):

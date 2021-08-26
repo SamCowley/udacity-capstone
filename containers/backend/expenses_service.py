@@ -1,6 +1,98 @@
 import os
+import flask
 import psycopg2
 import boto3
+
+class RequestItem:
+    def __init__(self, app):
+        self.app = app
+        self.uid = ''
+
+    def validate_token(self):
+        print("Validating token", flush=True)
+        session_interface = flask.sessions.SecureCookieSessionInterface()
+        s = session_interface.get_signing_serializer(self.app)
+        max_age = int(self.app.permanent_session_lifetime.total_seconds())
+
+        try:
+            data = s.loads(session, max_age=max_age)
+            self.uid = data['profile']['user_id']
+            print("Authentication success", flush=True)
+            return True
+        except:
+            print("Authentication failed", flush=True)
+            return False
+
+    def validate_arguments(*args, **kwargs):
+        # Function pointer dictionary for dynamic type casting
+        cast = {'int': int, 'float': float, 'str': str}
+    
+        for arg in args:
+            arg_type = self.var_map[arg][0]
+            allow_none = self.var_map[arg][1]
+            value = self.var_map[arg][2]
+    
+            # Fail if a value is empty and shouldn't be
+            if ( value is None or value == "" ) and not allow_none:
+                return False
+    
+            # Check type casting to the correct value causes an error (all values are passed in as strings)
+            try:
+                cast[arg_type](value)
+            except:
+                return False
+        return True
+
+class ExpenseItem(RequestItem):
+    def __init__(self, app, data):
+        self.app = app
+        self.token = data['token']
+        self.uid = ''
+        self.rid = data['rid']
+        self.eid = data['eid']
+        self.date = data['date']
+        self.description = data['description']
+        self.category = data['category']
+        self.amount = data['amount']
+        self.image = data['image']
+
+        self.var_map = {
+            'rid':         [ 'int',   False, self.rid ],
+            'eid':         [ 'int',   False, self.eid ],
+            'date':        [ 'str',   False, self.date ],
+            'description': [ 'str',   False, self.description ],
+            'category':    [ 'str',   True,  self.category ],
+            'amount':      [ 'float', False, self.amount ],
+            'image':       [ 'str',   True,  self.image ]
+        }
+
+    def validate_list(self):
+        return validate_arguments('rid')
+        
+    def validate_delete(self):
+        return validate_arguments(
+            'rid',
+            'eid')
+
+    def validate_create(self):
+        return validate_arguments(
+            'rid',
+            'eid',
+            'date',
+            'description',
+            'category',
+            'amount',
+            'image')
+
+    def validate_update(self):
+        return validate_arguments(
+            'rid',
+            'eid',
+            'date',
+            'description',
+            'category',
+            'amount',
+            'image')
 
 class Expenses:
     def __init__(self):
@@ -108,7 +200,10 @@ class Expenses:
             self.rds_conn.cancel()
 
     # Expenses
-    def get_expenses(self, uid, rid):
+    def get_expenses(self, item):
+        uid = item.uid
+        rid = item.rid
+
         try:
             self.rds_cur.execute("SELECT * FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (uid, rid))
             res = []
@@ -121,21 +216,25 @@ class Expenses:
             self.rds_conn.cancel()
             return None
 
-    def delete_expense(self, uid, rid, eid):
+    def delete_expense(self, item):
+        uid = item.uid
+        rid = item.rid
+        eid = item.eid
+
         self.rds_cur.execute("DELETE FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (uid, rid))
         self.rds_conn.commit()
 
-    def update_expense(self, uid, rid, eid, date, description, category, amount, image):
+    def update_expense(self, item):
         fields = []
 
-        fields.append(date)
-        fields.append(description)
-        fields.append(category)
-        fields.append(amount)
-        fields.append(image)
-        fields.append(uid)
-        fields.append(rid)
-        fields.append(eid)
+        fields.append(item.date)
+        fields.append(item.description)
+        fields.append(item.category)
+        fields.append(item.amount)
+        fields.append(item.image)
+        fields.append(item.uid)
+        fields.append(item.rid)
+        fields.append(item.eid)
             
         try:
             self.rds_cur.execute("UPDATE {} SET date=%s, description=%s, category=%s, amount=%s, image=%s where uid=%s AND rid=%s AND eid=%s;".format(self.rds_expense_table), tuple(fields))
@@ -144,7 +243,10 @@ class Expenses:
             print("ERROR: " + e, flush=True)
             self.rds_conn.cancel()
 
-    def add_expense(self, uid, rid, date = None, description = None, category = None, amount = None, image = None):
+    def add_expense(self, item):
+        uid = item.uid
+        rid = item.rid
+
         try:
             self.rds_cur.execute("SELECT MAX(eid) FROM {} where uid=%s and rid=%s".format(self.rds_expense_table), (uid, rid))
             eid = self.rds_cur.fetchall()[0][0]
@@ -153,11 +255,11 @@ class Expenses:
                 eid = 0
 
             fields = [uid, rid, int(eid) + 1]
-            fields.append(date)
-            fields.append(description)
-            fields.append(category)
-            fields.append(amount)
-            fields.append(image)
+            fields.append(item.date)
+            fields.append(item.description)
+            fields.append(item.category)
+            fields.append(item.amount)
+            fields.append(item.image)
 
             self.rds_cur.execute("INSERT INTO {} (uid, rid, eid, date, description, category, amount, image) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);".format(self.rds_expense_table), tuple(fields))
             self.rds_conn.commit()

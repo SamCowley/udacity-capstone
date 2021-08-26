@@ -95,6 +95,24 @@ body {
     padding: 2px;
 }
 
+#reports_list .report_item,
+#expenses_list .expense_item {
+    padding: 2px;
+}
+
+#reports_list tr .header,
+#reports_list .report_item .name,
+#expenses_list tr .header,
+#expenses_list .expense_item .date,
+#expenses_list .expense_item .description,
+#expenses_list .expense_item .category,
+#expenses_list .expense_item .amount,
+#expenses_list .expense_item .image {
+    width:1px;
+    padding-right: 20px;
+    white-space: nowrap;
+}
+
 #reports_list .report_item a,
 #expenses_list .expense_item a {
     text-decoration: none;

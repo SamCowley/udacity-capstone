@@ -29,8 +29,8 @@ function close_popup() {
 
 function delete_expenses_list() {
     const expenses_list = document.getElementById("expenses_list")
-    while (expenses_list.firstChild) {
-        expenses_list.removeChild(expenses_list.firstChild);
+    while (expenses_list.children.length > 2) {
+        expenses_list.removeChild(expenses_list.children[1]);
     }
 }
 

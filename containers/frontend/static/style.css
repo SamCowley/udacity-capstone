@@ -102,7 +102,7 @@ body {
 }
 
 #reports_list .report_item button,
-#expenses_list .expense_item button, {
+#expenses_list .expense_item button {
     float: right;
 }
 

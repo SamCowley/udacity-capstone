@@ -27,7 +27,7 @@
             <input type="date"/>
             <input type="text" placeholder="Description" />
             <input type="text" placeholder="Category" />
-            <input type="number" placeholder="0" />
+            <input type="number" placeholder="0.00" step="0.01" />
             <input type="file" />
             <input type="submit" value="Create" />
         </form>
@@ -40,7 +40,7 @@
             <input type="date"/>
             <input type="text" placeholder="Description" />
             <input type="text" placeholder="Category" />
-            <input type="number" placeholder="0" />
+            <input type="number" placeholder="0.00" step="0.01" />
             <input type="file" />
             <input type="submit" value="Update" />
         </form>
@@ -57,11 +57,11 @@
 
     <div id="templates">
         <div class="expense_item">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+            <div class="date"></div>
+            <div class="description"></div>
+            <div class="category"></div>
+            <div class="amount"></div>
+            <div class="image"></div>
             <button class="upload_receipt">Upload</button>
             <button class="update_expense">Update</button>
             <button class="delete_expense">Delete</button>

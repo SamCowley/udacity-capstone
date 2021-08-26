@@ -90,7 +90,7 @@ window.onload = function() {
                     load_expenses()
                 }
             }
-            xhr.open("POST", "/api/v0/expenses/create")
+            xhr.open("POST", "/api/v0/report/expenses/create")
             xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
             xhr.send(JSON.stringify({
                 "token": get_session(),
@@ -111,7 +111,7 @@ window.onload = function() {
                 load_expenses()
             }
         }
-        xhr.open("POST", "/api/v0/expenses/update")
+        xhr.open("POST", "/api/v0/report/expenses/update")
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.send(JSON.stringify({
             "token": get_session(),
@@ -136,7 +136,7 @@ window.onload = function() {
                 load_expenses()
             }
         }
-        xhr.open("POST", "/api/v0/expenses/delete")
+        xhr.open("POST", "/api/v0/report/expenses/delete")
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.send(JSON.stringify({
             "token": get_session(),

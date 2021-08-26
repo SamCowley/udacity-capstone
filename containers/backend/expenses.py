@@ -119,7 +119,7 @@ def create_expense():
     return flask.make_response(flask.jsonify({"message": "Success"}), 201)
 
 @app.route('/expenses/upload', methods=['POST'])
-def create_expense():
+def upload_expense():
     print("Requesting create expense", flush=True)
 
     data = flask.args.get('metadata')

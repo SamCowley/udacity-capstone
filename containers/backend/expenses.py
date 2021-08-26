@@ -125,7 +125,9 @@ def upload_expense():
 
     data = json.loads(flask.request.form.get('metadata'))
     file = flask.request.files['file']
-    item = expenses_service.ExpenseItem(app, data, file)
+    file_path = '/tmp/' + uuid.uuid4().hex
+    file.save(file_path)
+    item = expenses_service.ExpenseItem(app, data, file_path)
     if not item.validate_token():  return auth_fail()
     if not item.validate_upload(): return param_fail()
     expenses.upload_expense(item)

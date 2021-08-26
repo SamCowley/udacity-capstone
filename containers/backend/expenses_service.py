@@ -1,7 +1,7 @@
-import os
-import flask
-import psycopg2
 import boto3
+import flask
+import os
+import psycopg2
 
 class RequestItem:
     def __init__(self, app):
@@ -69,7 +69,7 @@ class ReportItem(RequestItem):
         return self.validate_arguments('name')
 
 class ExpenseItem(RequestItem):
-    def __init__(self, app, data, image = None):
+    def __init__(self, app, data, file_path = None):
         self.app = app
         self.token = data.get('token')
         self.uid = ''
@@ -79,7 +79,7 @@ class ExpenseItem(RequestItem):
         self.description = data.get('description')
         self.category = data.get('category')
         self.amount = data.get('amount')
-        self.image = image
+        self.file_path = file_path
 
         self.var_map = {
             'rid':         [ 'int',   False, self.rid ],
@@ -87,7 +87,8 @@ class ExpenseItem(RequestItem):
             'date':        [ 'str',   False, self.date ],
             'description': [ 'str',   False, self.description ],
             'category':    [ 'str',   True,  self.category ],
-            'amount':      [ 'float', False, self.amount ]
+            'amount':      [ 'float', False, self.amount ],
+            'file_path':   [ 'str',   True,  self.file_path ]
         }
 
     def validate_list(self):
@@ -103,13 +104,13 @@ class ExpenseItem(RequestItem):
         return self.validate_arguments('rid', 'date', 'description', 'category', 'amount')
 
     def validate_upload(self):
-        return self.validate_arguments('rid', 'eid') and self.image is not None
+        return self.validate_arguments('rid', 'eid', 'file_path')
 
 class Expenses:
     def __init__(self):
         self.init_config()
         self.init_db()
-        self.s3 = boto3.client('s3')
+        self.s3 = boto3.resource('s3')
 
     def init_config(self):
         try: self.s3_bucket = os.environ['s3_bucket']
@@ -283,10 +284,17 @@ class Expenses:
             self.rds_cur.execute("INSERT INTO {} (uid, rid, eid, date, description, category, amount, image) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);".format(self.rds_expense_table), tuple(fields))
             self.rds_conn.commit()
         except Exception as e:
-            print("ERROR: " + e, flush=True)
+            print("ERROR: " + str(e), flush=True)
             self.rds_conn.cancel()
 
     # Other
-    def upload_image(self, object_name):
-        return self.s3.generate_presigned_url(self.s3_bucket, object_name, ExpiresIn=self.s3_timeout)
+    def upload_image(self, item):
+        try:
+            s3.meta.client.upload_file(item.file_path, self.s3_bucket, item.file_path.split('/')[2])
+            os.remove(item.file_path)
+            self.rds_cur.execute("UPDATE {} SET image=%s where uid=%s AND rid=%s;".format(self.rds_report_table), (item.file_path.split('/')[2], item.uid, item.rid))
+            self.rds_conn.commit()
+        except Exception as e:
+            print("ERROR: " + str(e), flush=True)
+            self.rds_conn.cancel()
 

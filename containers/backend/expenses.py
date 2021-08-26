@@ -2,6 +2,7 @@ import os
 import expenses_service
 import flask
 from flask_cors import CORS
+import json
 import waitress
 
 app = flask.Flask(__name__)
@@ -122,13 +123,8 @@ def create_expense():
 def upload_expense():
     print("Requesting create expense", flush=True)
 
-    data = flask.request.form.get('metadata')
-    try:
-        print(flask.request.files.keys())
-        file = flask.request.files['file']
-    except Exception as e:
-        print("ERROR: " + str(e))
-        file = None
+    data = json.loads(flask.request.form.get('metadata'))
+    file = flask.request.files['file']
     item = expenses_service.ExpenseItem(app, data, file)
     if not item.validate_token():  return auth_fail()
     if not item.validate_upload(): return param_fail()

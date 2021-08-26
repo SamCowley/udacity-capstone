@@ -52,16 +52,16 @@ function load_expenses() {
             for ( let i = 0; i < data.length; i++) {
                 var newNode = document.getElementById("templates").children[0].cloneNode(true);
                 newNode.id = "";
-                newNode.children[0].textContent = data[i][2];
-                newNode.children[1].textContent = data[i][3];
-                newNode.children[2].textContent = data[i][4];
-                newNode.children[3].textContent = data[i][5];
-                newNode.children[4].textContent = data[i][2];
-                newNode.children[5].expense_id = data[i][1];
+                newNode.children[0].textContent = data[i][3];
+                newNode.children[1].textContent = data[i][4];
+                newNode.children[2].textContent = data[i][5];
+                newNode.children[3].textContent = data[i][6];
+                newNode.children[4].textContent = data[i][7];
+                newNode.children[5].expense_id = data[i][2];
                 newNode.children[5].onclick = function() { 
                     update_expense(this.expense_id);
                 }
-                newNode.children[6].expense_id = data[i][1];
+                newNode.children[6].expense_id = data[i][2];
                 newNode.children[6].onclick = function() {
                     delete_expense(this.expense_id);
                 }

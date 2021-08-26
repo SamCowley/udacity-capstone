@@ -160,7 +160,7 @@ class Expenses:
 
         # Create Expense Table
         if not table_exists(self.rds_expense_table):
-            self.rds_cur.execute("CREATE TABLE {} (uid TEXT, rid INT, eid INT, date timestamp, description TEXT, category TEXT, amount INT, image TEXT, PRIMARY KEY (uid, rid, eid));".format(self.rds_expense_table))
+            self.rds_cur.execute("CREATE TABLE {} (uid TEXT, rid INT, eid INT, date DATE, description TEXT, category TEXT, amount REAL, image TEXT, PRIMARY KEY (uid, rid, eid));".format(self.rds_expense_table))
             self.rds_conn.commit()
 
     # Reports

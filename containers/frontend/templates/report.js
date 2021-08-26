@@ -20,6 +20,13 @@ function delete_expense(new_id) {
     form.parentElement.style.display = "block";
 }
 
+function upload_expense(new_id) {
+    close_popup();
+    var form = document.getElementById("upload-expense");
+    form.children[0].value = new_id;
+    form.parentElement.style.display = "block";
+}
+
 function close_popup() {
     var forms = document.getElementsByClassName("popup");
     for (var i = 0; i < forms.length; i++) {

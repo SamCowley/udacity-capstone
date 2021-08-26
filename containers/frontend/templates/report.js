@@ -50,23 +50,32 @@ function load_expenses() {
             var resp = JSON.parse(xhr.response)
             var data = resp['data']
             for ( let i = 0; i < data.length; i++) {
-                var newNode = document.getElementById("templates").children[0].cloneNode(true);
+                // templates > table > tbody
+                var newNode = document.getElementById("templates").children[0].children[0].cloneNode(true);
                 newNode.id = "";
-                newNode.children[0].textContent = data[i][3];
-                newNode.children[1].textContent = data[i][4];
-                newNode.children[2].textContent = data[i][5];
-                newNode.children[3].textContent = data[i][6];
-                newNode.children[4].textContent = data[i][7];
-                newNode.children[5][0].expense_id = data[i][2];
-                newNode.children[5][0].onclick = function() { 
+                // tbody > tr > date
+                newNode.children[0].children[0].textContent = data[i][3];
+                // tbody > tr > description
+                newNode.children[0].children[1].textContent = data[i][4];
+                // tbody > tr > category
+                newNode.children[0].children[2].textContent = data[i][5];
+                // tbody > tr > amount
+                newNode.children[0].children[3].textContent = data[i][6];
+                // tbody > tr > image
+                newNode.children[0].children[4].textContent = data[i][7];
+                // tbody > tr > td > upload
+                newNode.children[0].children[5].children[0].expense_id = data[i][2];
+                newNode.children[0].children[5].children[0].onclick = function() { 
                     upload_expense(this.expense_id);
                 }
-                newNode.children[5][1].expense_id = data[i][2];
-                newNode.children[5][1].onclick = function() {
+                // tbody > tr > td > update
+                newNode.children[0].children[5].children[1].expense_id = data[i][2];
+                newNode.children[0].children[5].children[1].onclick = function() {
                     update_expense(this.expense_id);
                 }
-                newNode.children[5][2].expense_id = data[i][2];
-                newNode.children[5][2].onclick = function() {
+                // tbody > tr > td > delete
+                newNode.children[0].children[5].children[2].expense_id = data[i][2];
+                newNode.children[0].children[5].children[2].onclick = function() {
                     delete_expense(this.expense_id);
                 }
                 listNode.appendChild(newNode);

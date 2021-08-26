@@ -50,16 +50,20 @@ function load_reports() {
             var resp = JSON.parse(xhr.response)
             var data = resp['data']
             for ( let i = 0; i < data.length; i++) {
-                var newNode = document.getElementById("templates").children[0][0].cloneNode(true);
+                // templates > table > tbody
+                var newNode = document.getElementById("templates").children[0].children[0].cloneNode(true);
                 newNode.id = "";
-                newNode.children[0][0][0].textContent = data[i][2];
-                newNode.children[0][0][0].href = "/report/" + data[i][1];
-                newNode.children[0][1][0].report_id = data[i][1];
-                newNode.children[0][1][0].onclick = function() { 
+                // tbody > tr > name
+                newNode.children[0].children[0].children[0].textContent = data[i][2];
+                newNode.children[0].children[0].children[0].href = "/report/" + data[i][1];
+                // tbody > tr > td > update
+                newNode.children[0].children[1].children[0].report_id = data[i][1];
+                newNode.children[0].children[1].children[0].onclick = function() { 
                     update_report(this.report_id);
                 }
-                newNode.children[0][1][1].report_id = data[i][1];
-                newNode.children[0][1][1].onclick = function() {
+                // tbody > tr > td > delete
+                newNode.children[0].children[1].children[1].report_id = data[i][1];
+                newNode.children[0].children[1].children[1].onclick = function() {
                     delete_report(this.report_id);
                 }
                 listNode.appendChild(newNode);

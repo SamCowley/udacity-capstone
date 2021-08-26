@@ -173,7 +173,6 @@ window.onload = function() {
         const form_upload_expense = document.getElementById("upload-expense");
         event.preventDefault();
         var xhr = new XMLHttpRequest();
-        var formData = new FormData();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4) {
                 load_expenses();
@@ -181,7 +180,7 @@ window.onload = function() {
         }
         xhr.open("POST", "/api/v0/report/expenses/upload");
         xhr.setRequestHeader("Content-Type", "multipart/form-data");
-        formData.append("file", form_upload_expense.children[1].files[0])
+        var formData = new FormData(form_upload_expense);
         formData.append("metadata", JSON.stringify({
             "token": get_session(),
             "rid": window.location.pathname.split('/')[2],

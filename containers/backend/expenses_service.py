@@ -89,7 +89,7 @@ class ExpenseItem(RequestItem):
             'description': [ 'str',   False, self.description ],
             'category':    [ 'str',   True,  self.category ],
             'amount':      [ 'float', False, self.amount ],
-            'file_path':   [ 'str',   True,  self.file_path ]
+            'file_path':   [ 'str',   True,  self.file_path ],
             'image':       [ 'str',   True,  self.image ]
         }
 

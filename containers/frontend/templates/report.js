@@ -93,13 +93,13 @@ function load_expenses() {
                     }
                 }
                 // tbody > tr > td > update
-                newNode.children[0].children[5].children[1].expense_id = data[i][2];
-                newNode.children[0].children[5].children[1].onclick = function() {
+                newNode.children[0].children[5].children[0].expense_id = data[i][2];
+                newNode.children[0].children[5].children[0].onclick = function() {
                     update_expense(this.expense_id);
                 }
                 // tbody > tr > td > delete
-                newNode.children[0].children[5].children[2].expense_id = data[i][2];
-                newNode.children[0].children[5].children[2].onclick = function() {
+                newNode.children[0].children[5].children[1].expense_id = data[i][2];
+                newNode.children[0].children[5].children[1].onclick = function() {
                     delete_expense(this.expense_id);
                 }
                 listNode.appendChild(newNode);

@@ -131,7 +131,7 @@ def upload_expense():
     item = expenses_service.ExpenseItem(app, data, file_path)
     if not item.validate_token():  return auth_fail()
     if not item.validate_upload(): return param_fail()
-    expenses.upload_expense(item)
+    expenses.upload_image(item)
 
     return flask.make_response(flask.jsonify({"message": "Success"}), 201)
 

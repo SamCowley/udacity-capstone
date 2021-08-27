@@ -33,5 +33,18 @@ data:
 
 Auth0 requires a callback url to be defined, so it must match the endpoint or authentication will fail.
 
-## Logging
-Logging is handled by fluent-bit and sent to CloudWatch.
+## Rolling Updates
+Updates through EKS are rolling updates by default. The older versions of containers are not deleted until the new version
+has succesfully started.
+
+## A/B Testing
+Deploying the containers to a new namespace and updating the DNS entry will provide A/B Testing requirements.
+With both instances running with their own endpoints, DNS can point to each one as <domain> and old.<domain>
+
+A running example of this is https://www.reddit.com
+
+Since their website redesign, both designs can be accessed via https://wwww.reddit.com (latest) or https://old.reddit.com (old)
+
+## Monitoring
+Monitoring is handled by fluent-bit and sent to CloudWatch. All output logs for the containers are sent to CloudWatch.
+

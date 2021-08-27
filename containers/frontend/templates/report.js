@@ -50,6 +50,7 @@ function download_image(new_id) {
     }
     xhr.open("POST", "/api/v0/report/file/download")
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.responseType = 'arraybuffer';
     xhr.send(JSON.stringify({
         "token": get_session(),
         "image": new_id

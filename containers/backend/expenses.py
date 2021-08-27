@@ -166,6 +166,6 @@ def download_image():
     if (rc[0] == 200):
         flask.send_file(rc[1], as_attachment=True)
         os.remove(rc[1])
-    return return_stats(rc[0])
+    return return_status(rc[0])
 
 waitress.serve(app, host='0.0.0.0', port='8080')

@@ -71,23 +71,23 @@ function load_expenses() {
                 var newNode = document.getElementById("templates").children[0].children[0].cloneNode(true);
                 newNode.id = "";
                 // tbody > tr > date
-                newNode.children[0].children[0].textContent = data[i][3];
+                newNode.children[0].children[0].textContent = data[i][3].split(' ', 4).join(' ');
                 // tbody > tr > description
                 newNode.children[0].children[1].textContent = data[i][4];
                 // tbody > tr > category
                 newNode.children[0].children[2].textContent = data[i][5];
                 // tbody > tr > amount
-                newNode.children[0].children[3].textContent = data[i][6];
+                newNode.children[0].children[3].textContent = "$" + data[i][6].toFixed(2);
                 // tbody > tr > td > image
                 newNode.children[0].children[4].children[0].expense_id = data[i][2];
                 newNode.children[0].children[4].children[0].image_id = data[i][7];
-                if (data[i][7] === "") {
-                    newNode.children[0].children[4].children[0].value = "Upload";
+                if (data[i][7] === null) {
+                    newNode.children[0].children[4].children[0].textContent = "Upload";
                     newNode.children[0].children[4].children[0].onclick = function() { 
                         upload_expense(this.expense_id);
                     }
                 } else {
-                    newNode.children[0].children[4].children[0].value = "Download";
+                    newNode.children[0].children[4].children[0].textContent = "Download";
                     newNode.children[0].children[4].children[0].onclick = function() { 
                         download_expense(this.image_id);
                     }

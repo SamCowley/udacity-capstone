@@ -164,8 +164,10 @@ def download_image():
     rc = expenses.download_image(item)
 
     if (rc[0] == 200):
-        flask.send_file(rc[1], as_attachment=True)
-        os.remove(rc[1])
+        @after_this_request
+        def remove_file(response):
+            os.remove(rc[1])
+        return flask.send_file(rc[1], as_attachment=True)
     return return_status(rc[0])
 
 @app.route('/file/delete', methods=['POST'])

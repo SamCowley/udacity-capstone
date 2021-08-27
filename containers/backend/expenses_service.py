@@ -343,7 +343,7 @@ class Expenses:
             if (len(key) == 0 or key[0][0] is None): return (404,)
 
             self.s3.meta.client.delete_object(Bucket=self.s3_bucket, Key=key[0][0])
-            self.rds_cur.execute("UPDATE {} SET image = NULL where uid=%s AND rid=%s and eid=%s;".format(self.rds_expense_table), (item.file_path.split('/')[2], item.uid, item.rid, item.eid))
+            self.rds_cur.execute("UPDATE {} SET image = NULL where uid=%s AND rid=%s and eid=%s;".format(self.rds_expense_table), (item.uid, item.rid, item.eid))
             self.rds_conn.commit()
             return (200,)
         except Exception as e:

@@ -22,25 +22,25 @@ expenses = expenses_service.Expenses()
 def return_status(code, message = None):
     if code == 200:
         if message is None: message = "Success"
-        return flask.make_response(flask.jsonify({"message": message}, 200))
+        return flask.make_response(flask.jsonify({"message": message}), 200)
     if code == 201:
         if message is None: message = "Created"
-        return flask.make_response(flask.jsonify({"message": message}, 201))
+        return flask.make_response(flask.jsonify({"message": message}), 201)
     if code == 400:
         if message is None: message = "Invalid parameters"
-        return flask.make_response(flask.jsonify({"message": message}, 400))
+        return flask.make_response(flask.jsonify({"message": message}), 400)
     if code == 401:
         if message is None: message = "Invalid token"
-        return flask.make_response(flask.jsonify({"message": message}, 401))
+        return flask.make_response(flask.jsonify({"message": message}), 401)
     if code == 404:
         if message is None: message = "Not found"
-        return flask.make_response(flask.jsonify({"message": message}, 404))
+        return flask.make_response(flask.jsonify({"message": message}), 404)
     if code == 405:
         if message is None: message = "Method not allowed"
-        return flask.make_response(flask.jsonify({"message": message}, 405))
+        return flask.make_response(flask.jsonify({"message": message}), 405)
     if code == 500:
         if message is None: message = "Internal server error"
-        return flask.make_response(flask.jsonify({"message": message}, 405))
+        return flask.make_response(flask.jsonify({"message": message}), 405)
 
 @app.route('/list', methods=['POST'])
 def get_all_reports():

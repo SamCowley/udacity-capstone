@@ -48,3 +48,13 @@ Since their website redesign, both designs can be accessed via https://wwww.redd
 ## Monitoring
 Monitoring is handled by fluent-bit and sent to CloudWatch. All output logs for the containers are sent to CloudWatch.
 
+## Testing the application
+All endpoints are available through the frontend container.
+A user should be able to:
+* create, delete, and update expense reports.
+* create, delete, and update expense items.
+* upload, download, and delete images tied to an expense item.
+* Only able to view reports and expenses tied to that specific user.
+
+### Notes
+Only the "Category" field of expense reports are allowed to be empty.

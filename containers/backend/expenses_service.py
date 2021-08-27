@@ -173,15 +173,16 @@ class Expenses:
             self.rds_cur.execute("SELECT relname FROM pg_class WHERE relkind='r' AND relname = %s;", (name,))
             return len(self.rds_cur.fetchall()) > 0
 
+        # Initialize aws session
         aws = boto3.Session(profile_name='default')
 
+        # Connect to rds instance
         self.rds_conn = psycopg2.connect(
             host=self.rds_endpoint,
             port=self.rds_port,
             database=self.rds_db,
             user=self.rds_user,
             password=self.rds_pass)
-
         self.rds_cur = self.rds_conn.cursor()
 
         # Create Report Table
@@ -210,7 +211,15 @@ class Expenses:
 
     def delete_report(self, item):
         try:
+            # Delete all associated images
+            self.rds_cur.execute("SELECT image FROM {} where image is not NULL and uid=%s and rid=%s".format(self.rds_expense_table), (item.uid, item.rid))
+            rows = self.rds_cur.fetchall()
+            self.rds_conn.commit()
+            for row in rows:
+                self.s3.meta.client.delete_object(Bucket=self.s3_bucket, Key=row[0])
+            # Delete report
             self.rds_cur.execute("DELETE FROM {} where uid=%s AND rid=%s;".format(self.rds_report_table), (item.uid, item.rid))
+            # Delete all associate expenses
             self.rds_cur.execute("DELETE FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (item.uid, item.rid))
             self.rds_conn.commit()
         except Exception as e:
@@ -270,13 +279,12 @@ class Expenses:
         fields.append(item.description)
         fields.append(item.category)
         fields.append(item.amount)
-        fields.append(item.image)
         fields.append(item.uid)
         fields.append(item.rid)
         fields.append(item.eid)
             
         try:
-            self.rds_cur.execute("UPDATE {} SET date=%s, description=%s, category=%s, amount=%s, image=%s where uid=%s AND rid=%s AND eid=%s;".format(self.rds_expense_table), tuple(fields))
+            self.rds_cur.execute("UPDATE {} SET date=%s, description=%s, category=%s, amount=%s where uid=%s AND rid=%s AND eid=%s;".format(self.rds_expense_table), tuple(fields))
             self.rds_conn.commit()
         except Exception as e:
             print("ERROR: " + str(e), flush=True)
@@ -306,11 +314,13 @@ class Expenses:
     # Other
     def upload_image(self, item):
         try:
+            # Check if an image exists
             self.rds_cur.execute("SELECT image FROM {} where uid=%s and rid=%s and eid=%s".format(self.rds_expense_table), (item.uid, item.rid, item.eid))
             key = self.rds_cur.fetchall()
             self.rds_conn.commit()
             if (len(key) == 0 or key[0][0] is not None): return (405,)
 
+            # Save image
             self.s3.meta.client.upload_file(item.file_path, self.s3_bucket, item.file_path.split('/')[2])
             os.remove(item.file_path)
             self.rds_cur.execute("UPDATE {} SET image=%s where uid=%s AND rid=%s and eid=%s;".format(self.rds_expense_table), (item.file_path.split('/')[2], item.uid, item.rid, item.eid))
@@ -323,11 +333,13 @@ class Expenses:
 
     def download_image(self, item):
         try:
+            # Check if an image exists
             self.rds_cur.execute("SELECT image FROM {} where uid=%s and image=%s".format(self.rds_expense_table), (item.uid, item.image))
             key = self.rds_cur.fetchall()
             self.rds_conn.commit()
             if (len(key) == 0): return (404,)
 
+            # Return image
             self.s3.meta.client.download_file(self.s3_bucket, item.image, '/tmp/' + item.image)
             return (200, '/tmp/' + item.image)
         except Exception as e:
@@ -337,11 +349,13 @@ class Expenses:
 
     def delete_image(self, item):
         try:
+            # Check if an image exists
             self.rds_cur.execute("SELECT image FROM {} where uid=%s and rid=%s and eid=%s".format(self.rds_expense_table), (item.uid, item.rid, item.eid))
             key = self.rds_cur.fetchall()
             self.rds_conn.commit()
             if (len(key) == 0 or key[0][0] is None): return (404,)
 
+            # Delete image
             self.s3.meta.client.delete_object(Bucket=self.s3_bucket, Key=key[0][0])
             self.rds_cur.execute("UPDATE {} SET image = NULL where uid=%s AND rid=%s and eid=%s;".format(self.rds_expense_table), (item.uid, item.rid, item.eid))
             self.rds_conn.commit()

@@ -9,6 +9,8 @@ import waitress
 app = flask.Flask(__name__)
 # Allow client side scripts to read the session cookie
 app.config['SESSION_COOKIE_HTTPONLY'] = False
+# Allow CORS requests
+CORS(app)
 
 # Get PSK
 try: app.secret_key = os.environ['session_secret']
@@ -168,6 +170,7 @@ def download_image():
                 os.remove(rc[1])
             except:
                 pass
+            return response
         return flask.send_file(rc[1], as_attachment=True)
     return return_status(rc[0])
 

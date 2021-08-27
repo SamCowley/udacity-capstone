@@ -80,6 +80,7 @@ class ExpenseItem(RequestItem):
         self.category = data.get('category')
         self.amount = data.get('amount')
         self.file_path = file_path
+        self.image = data.get('image')
 
         self.var_map = {
             'rid':         [ 'int',   False, self.rid ],
@@ -89,6 +90,7 @@ class ExpenseItem(RequestItem):
             'category':    [ 'str',   True,  self.category ],
             'amount':      [ 'float', False, self.amount ],
             'file_path':   [ 'str',   True,  self.file_path ]
+            'image':       [ 'str',   True,  self.image ]
         }
 
     def validate_list(self):
@@ -105,6 +107,9 @@ class ExpenseItem(RequestItem):
 
     def validate_upload(self):
         return self.validate_arguments('rid', 'eid', 'file_path')
+
+    def validate_download(self):
+        return self.validate_arguments('image')
 
 class Expenses:
     def __init__(self):
@@ -278,22 +283,31 @@ class Expenses:
     # Other
     def upload_image(self, item):
         try:
-            self.s3.meta.client.upload_file(item.file_path, self.s3_bucket, item.file_path.split('/')[2])
-            os.remove(item.file_path)
-            self.rds_cur.execute("UPDATE {} SET image=%s where uid=%s AND rid=%s;".format(self.rds_expense_table), (item.file_path.split('/')[2], item.uid, item.rid))
-            self.rds_conn.commit()
-        except Exception as e:
-            print("ERROR: " + str(e), flush=True)
-            self.rds_conn.cancel()
-
-    def get_image(self, item):
-        try:
             self.rds_cur.execute("SELECT image FROM {} where uid=%s and rid=%s and eid=%s".format(self.rds_expense_table), (item.uid, item.rid, item.eid))
             key = self.rds_cur.fetchall()[0][0]
             self.rds_conn.commit()
-            file_object = self.s3.meta.client.get_object(Bucket=self.s3_bucket, Key=key)
-            return file_object
+            if (key is not None or key != ""): return 405
+            self.s3.meta.client.upload_file(item.file_path, self.s3_bucket, item.file_path.split('/')[2])
+            os.remove(item.file_path)
+            self.rds_cur.execute("UPDATE {} SET image=%s where uid=%s AND rid=%s and eid=%s;".format(self.rds_expense_table), (item.file_path.split('/')[2], item.uid, item.rid, item.eid))
+            self.rds_conn.commit()
+            return (200,)
         except Exception as e:
             print("ERROR: " + str(e), flush=True)
             self.rds_conn.cancel()
+            return (500,)
+
+    def download_image(self, item):
+        try:
+            self.rds_cur.execute("SELECT image FROM {} where uid=%s and image=%s".format(self.rds_expense_table), (item.uid, item.file_path))
+            key = self.rds_cur.fetchall()[0][0]
+            self.rds_conn.commit()
+            if key is None: return 404
+
+            file_object = self.s3.meta.client.download_file(self.s3_bucket, item.file_path, '/tmp/' + item.file_path)
+            return (200, '/tmp/' + item.file_path)
+        except Exception as e:
+            print("ERROR: " + str(e), flush=True)
+            self.rds_conn.cancel()
+            return (500,)
 

@@ -19,11 +19,28 @@ except: raise UnboundLocalError('Missing values: session_secret')
 # Service
 expenses = expenses_service.Expenses()
 
-def auth_fail():
-    return flask.make_response(flask.jsonify({"message": "Invalid token"}, 400))
-
-def param_fail():
-    return flask.make_response(flask.jsonify({"message": "Invalid parameters"}, 400))
+def return_status(code, message = None):
+    if code == 200:
+        if message is None: message = "Success"
+        return flask.make_response(flask.jsonify({"message": message}, 200))
+    if code == 201:
+        if message is None: message = "Created"
+        return flask.make_response(flask.jsonify({"message": message}, 201))
+    if code = 400:
+        if message is None: message = "Invalid parameters"
+        return flask.make_response(flask.jsonify({"message": message}, 400))
+    if code = 401:
+        if message is None: message = "Invalid token"
+        return flask.make_response(flask.jsonify({"message": message}, 401))
+    if code = 404:
+        if message is None: message = "Not found"
+        return flask.make_response(flask.jsonify({"message": message}, 404))
+    if code = 405:
+        if message is None: message = "Method not allowed"
+        return flask.make_response(flask.jsonify({"message": message}, 405))
+    if code = 500:
+        if message is None: message = "Internal server error"
+        return flask.make_response(flask.jsonify({"message": message}, 405))
 
 @app.route('/list', methods=['POST'])
 def get_all_reports():
@@ -31,8 +48,8 @@ def get_all_reports():
 
     data = flask.request.get_json()
     item = expenses_service.ReportItem(app, data)
-    if not item.validate_token(): return auth_fail()
-    if not item.validate_list():  return param_fail()
+    if not item.validate_token(): return return_status(401)
+    if not item.validate_list():  return return_status(400)
     reports = expenses.get_all_reports(item)
 
     return flask.make_response(flask.jsonify({"data": reports}), 200)
@@ -43,11 +60,11 @@ def delete_report():
 
     data = flask.request.get_json()
     item = expenses_service.ReportItem(app, data)
-    if not item.validate_token():  return auth_fail()
-    if not item.validate_delete(): return param_fail()
+    if not item.validate_token():  return return_status(401)
+    if not item.validate_delete(): return return_status(400)
     expenses.delete_report(item)
 
-    return flask.make_response(flask.jsonify({"message": "Success"}), 200)
+    return return_status(200)
 
 @app.route('/update', methods=['POST'])
 def update_report():
@@ -55,11 +72,11 @@ def update_report():
 
     data = flask.request.get_json()
     item = expenses_service.ReportItem(app, data)
-    if not item.validate_token():  return auth_fail()
-    if not item.validate_update(): return param_fail()
+    if not item.validate_token():  return return_status(401)
+    if not item.validate_update(): return return_status(400)
     expenses.update_report(item)
 
-    return flask.make_response(flask.jsonify({"message": "Success"}), 200)
+    return return_status(200)
 
 @app.route('/create', methods=['POST'])
 def create_report():
@@ -67,10 +84,11 @@ def create_report():
 
     data = flask.request.get_json()
     item = expenses_service.ReportItem(app, data)
-    if not item.validate_token():  return auth_fail()
-    if not item.validate_create(): return param_fail()
+    if not item.validate_token():  return return_status(401)
+    if not item.validate_create(): return return_status(400)
     expenses.add_report(item)
-    return flask.make_response(flask.jsonify({"message": "Success"}), 201)
+
+    return return_status(201)
 
 @app.route('/expenses/list', methods=['POST'])
 def get_report_expenses():
@@ -78,8 +96,8 @@ def get_report_expenses():
 
     data = flask.request.get_json()
     item = expenses_service.ExpenseItem(app, data)
-    if not item.validate_token(): return auth_fail()
-    if not item.validate_list():  return param_fail()
+    if not item.validate_token(): return return_status(401)
+    if not item.validate_list():  return return_status(400)
     resp = expenses.get_expenses(item)
 
     return flask.make_response(flask.jsonify({"data": resp}), 200)
@@ -90,11 +108,11 @@ def delete_expense():
 
     data = flask.request.get_json()
     item = expenses_service.ExpenseItem(app, data)
-    if not item.validate_token():  return auth_fail()
-    if not item.validate_delete(): return param_fail()
+    if not item.validate_token():  return return_status(401)
+    if not item.validate_delete(): return return_status(400)
     expenses.delete_expense(item)
 
-    return flask.make_response(flask.jsonify({"message": "Success"}), 200)
+    return return_status(200)
 
 @app.route('/expenses/update', methods=['POST'])
 def update_expense():
@@ -102,11 +120,11 @@ def update_expense():
 
     data = flask.request.get_json()
     item = expenses_service.ExpenseItem(app, data)
-    if not item.validate_token():  return auth_fail()
-    if not item.validate_update(): return param_fail()
+    if not item.validate_token():  return return_status(401)
+    if not item.validate_update(): return return_status(400)
     expenses.update_expense(item)
 
-    return flask.make_response(flask.jsonify({"message": "Success"}), 200)
+    return return_status(200)
 
 @app.route('/expenses/create', methods=['POST'])
 def create_expense():
@@ -114,14 +132,14 @@ def create_expense():
 
     data = flask.request.get_json()
     item = expenses_service.ExpenseItem(app, data)
-    if not item.validate_token():  return auth_fail()
-    if not item.validate_create(): return param_fail()
+    if not item.validate_token():  return return_status(401)
+    if not item.validate_create(): return return_status(400)
     expenses.add_expense(item)
 
-    return flask.make_response(flask.jsonify({"message": "Success"}), 201)
+    return return_status(201)
 
 @app.route('/expenses/upload', methods=['POST'])
-def upload_expense():
+def upload_image():
     print("Requesting create expense", flush=True)
 
     data = json.loads(flask.request.form.get('metadata'))
@@ -129,10 +147,25 @@ def upload_expense():
     file_path = '/tmp/' + uuid.uuid4().hex
     file.save(file_path)
     item = expenses_service.ExpenseItem(app, data, file_path)
-    if not item.validate_token():  return auth_fail()
-    if not item.validate_upload(): return param_fail()
-    expenses.upload_image(item)
+    if not item.validate_token():  return return_status(401)
+    if not item.validate_upload(): return return_status(400)
+    rc = expenses.upload_image(item)
 
-    return flask.make_response(flask.jsonify({"message": "Success"}), 201)
+    return return_status(rc[0])
+
+@app.route('/expenses/download', methods=['POST'])
+def download_image():
+    print("Requesting download image", flush=True)
+
+    data = flask.request.get_json()
+    item = expenses_service.ExpenseItem(app, data)
+    if not item.validate_token():    return return_status(401)
+    if not item.validate_download(): return return_status(400)
+    rc = expenses.download_image(item)
+
+    if (rc[0] == 200):
+        flask.send_file(rc[1], as_attachment=True)
+        os.remove(rc[1])
+    return return_stats(rc[0])
 
 waitress.serve(app, host='0.0.0.0', port='8080')

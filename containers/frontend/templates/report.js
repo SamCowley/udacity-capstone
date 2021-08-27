@@ -27,6 +27,16 @@ function upload_expense(new_id) {
     form.parentElement.style.display = "block";
 }
 
+function download_expense(new_id) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/v0/report/expenses/download")
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.send(JSON.stringify({
+        "token": get_session(),
+        "image": new_id
+    }));
+}
+
 function close_popup() {
     var forms = document.getElementsByClassName("popup");
     for (var i = 0; i < forms.length; i++) {
@@ -68,12 +78,19 @@ function load_expenses() {
                 newNode.children[0].children[2].textContent = data[i][5];
                 // tbody > tr > amount
                 newNode.children[0].children[3].textContent = data[i][6];
-                // tbody > tr > image
-                newNode.children[0].children[4].textContent = data[i][7];
-                // tbody > tr > td > upload
-                newNode.children[0].children[5].children[0].expense_id = data[i][2];
-                newNode.children[0].children[5].children[0].onclick = function() { 
-                    upload_expense(this.expense_id);
+                // tbody > tr > td > image
+                newNode.children[0].children[4].children[0].expense_id = data[i][2];
+                newNode.children[0].children[4].children[0].image_id = data[i][7];
+                if (data[i][7] === "") {
+                    newNode.children[0].children[4].children[0].value = "Upload";
+                    newNode.children[0].children[4].children[0].onclick = function() { 
+                        upload_expense(this.expense_id);
+                    }
+                } else {
+                    newNode.children[0].children[4].children[0].value = "Download";
+                    newNode.children[0].children[4].children[0].onclick = function() { 
+                        download_expense(this.image_id);
+                    }
                 }
                 // tbody > tr > td > update
                 newNode.children[0].children[5].children[1].expense_id = data[i][2];

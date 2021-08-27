@@ -229,3 +229,4 @@ window.onload = function() {
     
     load_expenses();
 };
+

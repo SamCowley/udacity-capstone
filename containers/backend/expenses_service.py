@@ -286,7 +286,7 @@ class Expenses:
             self.rds_cur.execute("SELECT image FROM {} where uid=%s and rid=%s and eid=%s".format(self.rds_expense_table), (item.uid, item.rid, item.eid))
             key = self.rds_cur.fetchall()
             self.rds_conn.commit()
-            if (len(key) == 0 or key[0][0] == None): return (405,)
+            if (len(key) == 0 or key[0][0] is not None): return (405,)
 
             self.s3.meta.client.upload_file(item.file_path, self.s3_bucket, item.file_path.split('/')[2])
             os.remove(item.file_path)
@@ -300,10 +300,10 @@ class Expenses:
 
     def download_image(self, item):
         try:
-            self.rds_cur.execute("SELECT image FROM {} where uid=%s and image=%s".format(self.rds_expense_table), (item.uid, item.file_path))
+            self.rds_cur.execute("SELECT image FROM {} where uid=%s and image=%s".format(self.rds_expense_table), (item.uid, item.image))
             key = self.rds_cur.fetchall()
             self.rds_conn.commit()
-            if (len(key) == 0 or key[0][0] == None): return (404,)
+            if (len(key) == 0 or key[0][0] is None): return (404,)
 
             file_object = self.s3.meta.client.download_file(self.s3_bucket, item.image, '/tmp/' + item.image)
             return (200, '/tmp/' + item.file_path)

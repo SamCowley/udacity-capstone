@@ -241,7 +241,7 @@ class Expenses:
         key = self.rds_cur.fetchall()[0][0]
         self.rds_conn.commit()
         if (expense is not None or expense != ""):
-            s3.meta.client.delete_object(Bucket=self.s3_bucket, Key=key)
+            self.s3.meta.client.delete_object(Bucket=self.s3_bucket, Key=key)
 
         self.rds_cur.execute("DELETE FROM {} where uid=%s and rid=%s and eid=%s;".format(self.rds_expense_table), (item.uid, item.rid, item.eid))
         self.rds_conn.commit()
@@ -292,7 +292,7 @@ class Expenses:
     # Other
     def upload_image(self, item):
         try:
-            s3.meta.client.upload_file(item.file_path, self.s3_bucket, item.file_path.split('/')[2])
+            self.s3.meta.client.upload_file(item.file_path, self.s3_bucket, item.file_path.split('/')[2])
             os.remove(item.file_path)
             self.rds_cur.execute("UPDATE {} SET image=%s where uid=%s AND rid=%s;".format(self.rds_report_table), (item.file_path.split('/')[2], item.uid, item.rid))
             self.rds_conn.commit()
@@ -305,7 +305,7 @@ class Expenses:
             self.rds_cur.execute("SELECT image FROM {} where uid=%s and rid=%s and eid=%s".format(self.rds_expense_table), (item.uid, item.rid, item.eid))
             key = self.rds_cur.fetchall()[0][0]
             self.rds_conn.commit()
-            file_object = s3.meta.client.get_object(Bucket=self.s3_bucket, Key=key)
+            file_object = self.s3.meta.client.get_object(Bucket=self.s3_bucket, Key=key)
             return file_object
         except Exception as e:
             print("ERROR: " + str(e), flush=True)

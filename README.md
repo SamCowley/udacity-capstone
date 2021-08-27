@@ -43,7 +43,7 @@ With both instances running with their own endpoints, DNS can point to each one 
 
 A running example of this is https://www.reddit.com
 
-Since their website redesign, both designs can be accessed via https://wwww.reddit.com (latest) or https://old.reddit.com (old)
+Since their website redesign, both designs can be accessed via https://www.reddit.com (latest) or https://old.reddit.com (old)
 
 ## Monitoring
 Monitoring is handled by fluent-bit and sent to CloudWatch. All output logs for the containers are sent to CloudWatch.

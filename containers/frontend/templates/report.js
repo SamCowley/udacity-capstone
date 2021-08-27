@@ -14,26 +14,51 @@ function update_expense(new_id) {
 }
 
 function delete_expense(new_id) {
-    close_popup();
-    var form = document.getElementById("delete-expense");
-    form.children[0].value = new_id;
-    form.parentElement.style.display = "block";
-}
-
-function upload_expense(new_id) {
-    close_popup();
-    var form = document.getElementById("upload-expense");
-    form.children[0].value = new_id;
-    form.parentElement.style.display = "block";
-}
-
-function download_expense(new_id) {
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/v0/report/expenses/download")
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            load_expenses()
+        }
+    }
+    xhr.open("POST", "/api/v0/report/expenses/delete")
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.send(JSON.stringify({
+        "token": get_session(),
+        "rid": window.location.pathname.split('/')[2],
+        "eid":  new_id
+    }));
+}
+
+function upload_image(new_id) {
+    close_popup();
+    var form = document.getElementById("upload-image");
+    form.children[0].value = new_id;
+    form.parentElement.style.display = "block";
+}
+
+function download_image(new_id) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/v0/report/file/download")
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhr.send(JSON.stringify({
         "token": get_session(),
         "image": new_id
+    }));
+}
+
+function delete_image(new_id) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            load_expenses()
+        }
+    }
+    xhr.open("POST", "/api/v0/report/file/delete")
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.send(JSON.stringify({
+        "token": get_session(),
+        "rid": window.location.pathname.split('/')[2],
+        "eid":  new_id
     }));
 }
 
@@ -84,12 +109,17 @@ function load_expenses() {
                 if (data[i][7] === null) {
                     newNode.children[0].children[4].children[0].textContent = "Upload";
                     newNode.children[0].children[4].children[0].onclick = function() { 
-                        upload_expense(this.expense_id);
+                        upload_image(this.expense_id);
                     }
+                    newNode.children[0].children[4].children[1].style = "display:none;";
                 } else {
                     newNode.children[0].children[4].children[0].textContent = "Download";
                     newNode.children[0].children[4].children[0].onclick = function() { 
-                        download_expense(this.image_id);
+                        download_image(this.image_id);
+                    }
+                    newNode.children[0].children[4].children[1].image_id = data[i][7];
+                    newNode.children[0].children[4].children[0].onclick = function() { 
+                        delete_image(this.image_id);
                     }
                 }
                 // tbody > tr > td > update
@@ -165,42 +195,22 @@ window.onload = function() {
         close_popup()
     });
 
-    const form_delete_expense = document.getElementById("delete-expense");
-    form_delete_expense.addEventListener("submit", function(event) {
-        const form_delete_expense = document.getElementById("delete-expense");
+    const form_upload_image = document.getElementById("upload-image");
+    form_upload_image.addEventListener("submit", function(event) {
+        const form_upload_image = document.getElementById("upload-image");
         event.preventDefault();
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4) {
-                load_expenses()
+                load_images();
             }
         }
-        xhr.open("POST", "/api/v0/report/expenses/delete")
-        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        xhr.send(JSON.stringify({
-            "token": get_session(),
-            "rid": window.location.pathname.split('/')[2],
-            "eid":  form_delete_expense.children[0].value
-        }));
-        close_popup()
-    });
-
-    const form_upload_expense = document.getElementById("upload-expense");
-    form_upload_expense.addEventListener("submit", function(event) {
-        const form_upload_expense = document.getElementById("upload-expense");
-        event.preventDefault();
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                load_expenses();
-            }
-        }
-        xhr.open("POST", "/api/v0/report/expenses/upload");
-        var formData = new FormData(form_upload_expense);
+        xhr.open("POST", "/api/v0/report/file/upload");
+        var formData = new FormData(form_upload_image);
         formData.append("metadata", JSON.stringify({
             "token": get_session(),
             "rid": window.location.pathname.split('/')[2],
-            "eid": form_upload_expense.children[0].value
+            "eid": form_upload_image.children[0].value
         }));
         xhr.send(formData);
         close_popup();

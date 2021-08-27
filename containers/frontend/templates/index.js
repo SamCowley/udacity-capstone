@@ -14,10 +14,18 @@ function update_report(new_id) {
 }
 
 function delete_report(new_id) {
-    close_popup();
-    var form = document.getElementById("delete-report");
-    form.children[0].value = new_id;
-    form.parentElement.style.display = "block";
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            load_reports()
+        }
+    }
+    xhr.open("POST", "/api/v0/report/delete")
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.send(JSON.stringify({
+        "token": get_session(),
+        "rid":  new_id
+    }));
 }
 
 function close_popup() {
@@ -118,28 +126,7 @@ window.onload = function() {
             "name": form_update_report.children[1].value
         }));
         close_popup()
-        load_reports()
     });
     
-    const form_delete_report = document.getElementById("delete-report");
-    form_delete_report.addEventListener("submit", function(event) {
-        const form_delete_report = document.getElementById("delete-report");
-        event.preventDefault();
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                load_reports()
-            }
-        }
-        xhr.open("POST", "/api/v0/report/delete")
-        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        xhr.send(JSON.stringify({
-            "token": get_session(),
-            "rid":  form_delete_report.children[0].value
-        }));
-        close_popup()
-        load_reports()
-    });
-
     load_reports()
 };

@@ -51,17 +51,9 @@
         </form>
         <button onclick="close_popup()">Cancel</button>
     </div>
-    
-    <div class="popup">
-        <form id="delete-expense" action="/submit">
-            <input type="text" value="" style="display: none" />
-            <input type="submit" value="Delete" />
-        </form>
-        <button onclick="close_popup()">Cancel</button>
-    </div>
 
     <div class="popup">
-        <form id="upload-expense" action="/submit">
+        <form id="upload-image" action="/submit">
             <input type="text" value="" style="display: none" />
             <input type="file" name="file" />
             <input type="submit" value="Upload" />
@@ -79,6 +71,7 @@
                     <td class="amount" style="text-align:right"></td>
                     <td class="image">
                         <button class="upload_receipt"></button>
+                        <button class="delete_receipt">Delete</button>
                     </td>
                     <td>
                         <button class="update_expense">Update</button>

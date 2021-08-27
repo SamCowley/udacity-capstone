@@ -52,8 +52,8 @@ class ReportItem(RequestItem):
         self.name = data.get('name')
 
         self.var_map = {
-            'rid':  [ 'int',   False, self.rid ],
-            'name': [ 'str',   True,  self.name ]
+            'rid':  [ 'int', False, self.rid ],
+            'name': [ 'str', False, self.name ]
         }
 
     def validate_list(self):
@@ -82,34 +82,60 @@ class ExpenseItem(RequestItem):
         self.file_path = file_path
         self.image = data.get('image')
 
+    def validate_list(self):
+        self.var_map = {
+            'rid': [ 'int', False, self.rid ]
+        }
+        return self.validate_arguments('rid')
+        
+    def validate_delete(self):
+        self.var_map = {
+            'rid': [ 'int',   False, self.rid ],
+            'eid': [ 'int',   False, self.eid ]
+        }
+        return self.validate_arguments('rid', 'eid')
+
+    def validate_update(self):
         self.var_map = {
             'rid':         [ 'int',   False, self.rid ],
             'eid':         [ 'int',   False, self.eid ],
             'date':        [ 'str',   False, self.date ],
             'description': [ 'str',   False, self.description ],
             'category':    [ 'str',   True,  self.category ],
-            'amount':      [ 'float', False, self.amount ],
-            'file_path':   [ 'str',   True,  self.file_path ],
-            'image':       [ 'str',   True,  self.image ]
+            'amount':      [ 'float', False, self.amount ]
         }
-
-    def validate_list(self):
-        return self.validate_arguments('rid')
-        
-    def validate_delete(self):
-        return self.validate_arguments('rid', 'eid')
-
-    def validate_update(self):
         return self.validate_arguments('rid', 'eid', 'date', 'description', 'category', 'amount')
 
     def validate_create(self):
+        self.var_map = {
+            'rid':         [ 'int',   False, self.rid ],
+            'date':        [ 'str',   False, self.date ],
+            'description': [ 'str',   False, self.description ],
+            'category':    [ 'str',   True,  self.category ],
+            'amount':      [ 'float', False, self.amount ]
+        }
         return self.validate_arguments('rid', 'date', 'description', 'category', 'amount')
 
     def validate_upload(self):
+        self.var_map = {
+            'rid':       [ 'int', False, self.rid ],
+            'eid':       [ 'int', False, self.eid ],
+            'file_path': [ 'str', False, self.file_path ]
+        }
         return self.validate_arguments('rid', 'eid', 'file_path')
 
     def validate_download(self):
+        self.var_map = {
+            'image': [ 'str', False, self.image ]
+        }
         return self.validate_arguments('image')
+
+    def validate_delete_image(self):
+        self.var_map = {
+            'rid':   [ 'int', False, self.rid ],
+            'eid':   [ 'int', False, self.eid ]
+        }
+        return self.validate_arguments('rid', 'eid')
 
 class Expenses:
     def __init__(self):
@@ -120,9 +146,6 @@ class Expenses:
     def init_config(self):
         try: self.s3_bucket = os.environ['s3_bucket']
         except: raise UnboundLocalError('s3_bucket')
-
-        try: self.s3_timeout = os.environ['s3_timeout']
-        except: raise UnboundLocalError('s3_timeout')
 
         try: self.rds_endpoint = os.environ['rds_endpoint']
         except: raise UnboundLocalError('rds_endpoint')
@@ -306,9 +329,24 @@ class Expenses:
             if (len(key) == 0 or key[0][0] is None): return (404,)
 
             file_object = self.s3.meta.client.download_file(self.s3_bucket, item.image, '/tmp/' + item.image)
-            return (200, '/tmp/' + item.file_path)
+            return (200, '/tmp/' + item.image)
         except Exception as e:
             print("ERROR: " + str(e), flush=True)
             self.rds_conn.cancel()
             return (500,)
 
+    def delete_image(self, item):
+        try:
+            self.rds_cur.execute("SELECT image FROM {} where uid=%s and rid=%s and eid=%s".format(self.rds_expense_table), (item.uid, item.rid, item.eid))
+            key = self.rds_cur.fetchall()
+            self.rds_conn.commit()
+            if (len(key) == 0 or key[0][0] is None): return (404,)
+
+            self.s3.meta.client.delete_object(Bucket=self.s3_bucket, Key=key[0][0])
+            self.rds_cur.execute("UPDATE {} SET image = NULL where uid=%s AND rid=%s and eid=%s;".format(self.rds_expense_table), (item.file_path.split('/')[2], item.uid, item.rid, item.eid))
+            self.rds_conn.commit()
+            return (200,)
+        except Exception as e:
+            print("ERROR: " + str(e), flush=True)
+            self.rds_conn.cancel()
+            return (500,)

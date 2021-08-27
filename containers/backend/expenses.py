@@ -138,7 +138,7 @@ def create_expense():
 
     return return_status(201)
 
-@app.route('/expenses/upload', methods=['POST'])
+@app.route('/file/upload', methods=['POST'])
 def upload_image():
     print("Requesting create expense", flush=True)
 
@@ -153,7 +153,7 @@ def upload_image():
 
     return return_status(rc[0])
 
-@app.route('/expenses/download', methods=['POST'])
+@app.route('/file/download', methods=['POST'])
 def download_image():
     print("Requesting download image", flush=True)
 
@@ -166,6 +166,18 @@ def download_image():
     if (rc[0] == 200):
         flask.send_file(rc[1], as_attachment=True)
         os.remove(rc[1])
+    return return_status(rc[0])
+
+@app.route('/file/delete', methods=['POST'])
+def delete_image():
+    print("Requesting download image", flush=True)
+
+    data = flask.request.get_json()
+    item = expenses_service.ExpenseItem(app, data)
+    if not item.validate_token():        return return_status(401)
+    if not item.validate_delete_image(): return return_status(400)
+    rc = expenses.delete_image(item)
+
     return return_status(rc[0])
 
 waitress.serve(app, host='0.0.0.0', port='8080')

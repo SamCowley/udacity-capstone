@@ -69,7 +69,7 @@ class ReportItem(RequestItem):
         return self.validate_arguments('name')
 
 class ExpenseItem(RequestItem):
-    def __init__(self, app, data, file_path = None):
+    def __init__(self, app, data, file_path = None, mime_type = None):
         self.app = app
         self.token = data.get('token')
         self.uid = ''
@@ -80,6 +80,7 @@ class ExpenseItem(RequestItem):
         self.category = data.get('category')
         self.amount = data.get('amount')
         self.file_path = file_path
+        self.mime_type = mime_type
         self.image = data.get('image')
 
     def validate_list(self):
@@ -216,7 +217,8 @@ class Expenses:
             rows = self.rds_cur.fetchall()
             self.rds_conn.commit()
             for row in rows:
-                self.s3.meta.client.delete_object(Bucket=self.s3_bucket, Key=row[0])
+                key = row[0].split('.')[0]
+                self.s3.meta.client.delete_object(Bucket=self.s3_bucket, Key=key)
             # Delete report
             self.rds_cur.execute("DELETE FROM {} where uid=%s AND rid=%s;".format(self.rds_report_table), (item.uid, item.rid))
             # Delete all associate expenses
@@ -323,7 +325,7 @@ class Expenses:
             # Save image
             self.s3.meta.client.upload_file(item.file_path, self.s3_bucket, item.file_path.split('/')[2])
             os.remove(item.file_path)
-            self.rds_cur.execute("UPDATE {} SET image=%s where uid=%s AND rid=%s and eid=%s;".format(self.rds_expense_table), (item.file_path.split('/')[2], item.uid, item.rid, item.eid))
+            self.rds_cur.execute("UPDATE {} SET image=%s where uid=%s AND rid=%s and eid=%s;".format(self.rds_expense_table), (item.file_path.split('/')[2] + "." + item.mime_type, item.uid, item.rid, item.eid))
             self.rds_conn.commit()
             return (200,)
         except Exception as e:
@@ -334,14 +336,15 @@ class Expenses:
     def download_image(self, item):
         try:
             # Check if an image exists
-            self.rds_cur.execute("SELECT image FROM {} where uid=%s and image=%s".format(self.rds_expense_table), (item.uid, item.image))
+            self.rds_cur.execute("SELECT image FROM {} where uid=%s and image like %s".format(self.rds_expense_table), (item.uid, item.image + ".%"))
             key = self.rds_cur.fetchall()
             self.rds_conn.commit()
             if (len(key) == 0): return (404,)
+            mime_type = key[0].split('.')[1]
 
             # Return image
             self.s3.meta.client.download_file(self.s3_bucket, item.image, '/tmp/' + item.image)
-            return (200, '/tmp/' + item.image)
+            return (200, '/tmp/' + item.image, mime_type)
         except Exception as e:
             print("ERROR: " + str(e), flush=True)
             self.rds_conn.cancel()
@@ -350,13 +353,13 @@ class Expenses:
     def delete_image(self, item):
         try:
             # Check if an image exists
-            self.rds_cur.execute("SELECT image FROM {} where uid=%s and rid=%s and eid=%s".format(self.rds_expense_table), (item.uid, item.rid, item.eid))
+            self.rds_cur.execute("SELECT image FROM {} where image is not NULL and uid=%s and rid=%s and eid=%s".format(self.rds_expense_table), (item.uid, item.rid, item.eid))
             key = self.rds_cur.fetchall()
             self.rds_conn.commit()
-            if (len(key) == 0 or key[0][0] is None): return (404,)
+            if (len(key) == 0): return (404,)
 
             # Delete image
-            self.s3.meta.client.delete_object(Bucket=self.s3_bucket, Key=key[0][0])
+            self.s3.meta.client.delete_object(Bucket=self.s3_bucket, Key=key[0][0].split('.')[0])
             self.rds_cur.execute("UPDATE {} SET image = NULL where uid=%s AND rid=%s and eid=%s;".format(self.rds_expense_table), (item.uid, item.rid, item.eid))
             self.rds_conn.commit()
             return (200,)

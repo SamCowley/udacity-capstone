@@ -255,10 +255,10 @@ class Expenses:
 
     def delete_expense(self, item):
         self.rds_cur.execute("SELECT image FROM {} where uid=%s and rid=%s and eid=%s".format(self.rds_expense_table), (item.uid, item.rid, item.eid))
-        key = self.rds_cur.fetchall()[0][0]
+        key = self.rds_cur.fetchall()
         self.rds_conn.commit()
-        if (expense is not None or expense != ""):
-            self.s3.meta.client.delete_object(Bucket=self.s3_bucket, Key=key)
+        if (len(key) > 0 and key[0][0] is not None):
+            self.s3.meta.client.delete_object(Bucket=self.s3_bucket, Key=key[0][0])
 
         self.rds_cur.execute("DELETE FROM {} where uid=%s and rid=%s and eid=%s;".format(self.rds_expense_table), (item.uid, item.rid, item.eid))
         self.rds_conn.commit()

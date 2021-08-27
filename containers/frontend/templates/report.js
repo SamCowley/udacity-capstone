@@ -58,7 +58,7 @@ function delete_image(new_id) {
     xhr.send(JSON.stringify({
         "token": get_session(),
         "rid": window.location.pathname.split('/')[2],
-        "eid":  new_id
+        "eid": new_id
     }));
 }
 
@@ -117,9 +117,9 @@ function load_expenses() {
                     newNode.children[0].children[4].children[0].onclick = function() { 
                         download_image(this.image_id);
                     }
-                    newNode.children[0].children[4].children[1].image_id = data[i][7];
-                    newNode.children[0].children[4].children[0].onclick = function() { 
-                        delete_image(this.image_id);
+                    newNode.children[0].children[4].children[1].expense_id = data[i][2];
+                    newNode.children[0].children[4].children[1].onclick = function() { 
+                        delete_image(this.expense_id);
                     }
                 }
                 // tbody > tr > td > update
@@ -202,7 +202,7 @@ window.onload = function() {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4) {
-                load_images();
+                load_expenses();
             }
         }
         xhr.open("POST", "/api/v0/report/file/upload");
@@ -216,6 +216,5 @@ window.onload = function() {
         close_popup();
     });
     
-
     load_expenses();
 };

@@ -172,11 +172,11 @@ def download_image():
                 pass
             return response
 
-        download_name = item.image + '.img'
+        download_name = item.image.split('.')[0] + '.img'
         if ':' in rc[2]:
-            download_name = item.image + '.' + rc[2].split(':')[1]
+            download_name = item.image.split('.')[0] + '.' + rc[2].split(':')[1]
         
-        return flask.send_file(rc[1], rc[2].replace(':', '/'), True, download_name)
+        return flask.send_file(rc[1], rc[2].replace(':', '/'))
     return return_status(rc[0])
 
 @app.route('/file/delete', methods=['POST'])

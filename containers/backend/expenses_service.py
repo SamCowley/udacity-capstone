@@ -326,9 +326,9 @@ class Expenses:
             self.rds_cur.execute("SELECT image FROM {} where uid=%s and image=%s".format(self.rds_expense_table), (item.uid, item.image))
             key = self.rds_cur.fetchall()
             self.rds_conn.commit()
-            if (len(key) == 0 or key[0][0] is None): return (404,)
+            if (len(key) == 0): return (404,)
 
-            file_object = self.s3.meta.client.download_file(self.s3_bucket, item.image, '/tmp/' + item.image)
+            self.s3.meta.client.download_file(self.s3_bucket, item.image, '/tmp/' + item.image)
             return (200, '/tmp/' + item.image)
         except Exception as e:
             print("ERROR: " + str(e), flush=True)

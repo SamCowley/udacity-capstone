@@ -168,71 +168,60 @@ class Expenses:
 
     # Reports
     def get_all_reports(self, item):
-        uid = item.uid
         try:
-            self.rds_cur.execute("SELECT * FROM {} where uid=%s;".format(self.rds_report_table), (uid,))
+            self.rds_cur.execute("SELECT * FROM {} where uid=%s;".format(self.rds_report_table), (item.uid,))
             res = []
-            for item in self.rds_cur.fetchall():
-                res.append(item)
+            for row in self.rds_cur.fetchall():
+                res.append(row)
             self.rds_conn.commit()
             return res
         except Exception as e:
-            print("ERROR: " + e, flush=True)
+            print("ERROR: " + str(e), flush=True)
             self.rds_conn.cancel()
             return None
 
     def delete_report(self, item):
-        uid = item.uid
-        rid = item.rid
         try:
-            self.rds_cur.execute("DELETE FROM {} where uid=%s AND rid=%s;".format(self.rds_report_table), (uid, rid))
-            self.rds_cur.execute("DELETE FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (uid, rid))
+            self.rds_cur.execute("DELETE FROM {} where uid=%s AND rid=%s;".format(self.rds_report_table), (item.uid, item.rid))
+            self.rds_cur.execute("DELETE FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (item.uid, item.rid))
             self.rds_conn.commit()
         except Exception as e:
-            print("ERROR: " + e, flush=True)
+            print("ERROR: " + str(e), flush=True)
             self.rds_conn.cancel()
 
     def update_report(self, item):
-        uid = item.uid
-        rid = item.rid
-        name = item.name
         try:
-            self.rds_cur.execute("UPDATE {} SET name=%s where uid=%s AND rid=%s;".format(self.rds_report_table), (name, uid, rid))
+            self.rds_cur.execute("UPDATE {} SET name=%s where uid=%s AND rid=%s;".format(self.rds_report_table), (item.name, item.uid, item.rid))
             self.rds_conn.commit()
         except Exception as e:
-            print("ERROR: " + e, flush=True)
+            print("ERROR: " + str(e), flush=True)
             self.rds_conn.cancel()
 
     def add_report(self, item):
-        uid = item.uid
-        name = item.name
         try:
-            self.rds_cur.execute("SELECT MAX(rid) FROM {} where uid=%s".format(self.rds_report_table), (uid,))
+            self.rds_cur.execute("SELECT MAX(rid) FROM {} where uid=%s".format(self.rds_report_table), (item.uid,))
             rid = self.rds_cur.fetchall()[0][0]
             self.rds_conn.commit()
             if rid is None:
                 rid = 0
 
-            self.rds_cur.execute("INSERT INTO {} (uid, rid, name) VALUES (%s, %s, %s);".format(self.rds_report_table), (uid, int(rid) + 1, name))
+            self.rds_cur.execute("INSERT INTO {} (uid, rid, name) VALUES (%s, %s, %s);".format(self.rds_report_table), (item.uid, int(rid) + 1, item.name))
             self.rds_conn.commit()
         except Exception as e:
-            print("ERROR: " + e, flush=True)
+            print("ERROR: " + str(e), flush=True)
             self.rds_conn.cancel()
 
     # Expenses
     def get_expenses(self, item):
-        uid = item.uid
-        rid = item.rid
-
         try:
-            self.rds_cur.execute("SELECT * FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (uid, rid))
+            self.rds_cur.execute("SELECT * FROM {} where uid=%s and rid=%s;".format(self.rds_expense_table), (item.uid, item.rid))
             res = []
-            for item in self.rds_cur.fetchall():
-                res.append(item)
+            for row in self.rds_cur.fetchall():
+                res.append(row)
             self.rds_conn.commit()
             return res
         except Exception as e:
-            print("ERROR: " + e, flush=True)
+            print("ERROR: " + str(e), flush=True)
             self.rds_conn.cancel()
             return None
 
@@ -262,21 +251,18 @@ class Expenses:
             self.rds_cur.execute("UPDATE {} SET date=%s, description=%s, category=%s, amount=%s, image=%s where uid=%s AND rid=%s AND eid=%s;".format(self.rds_expense_table), tuple(fields))
             self.rds_conn.commit()
         except Exception as e:
-            print("ERROR: " + e, flush=True)
+            print("ERROR: " + str(e), flush=True)
             self.rds_conn.cancel()
 
     def add_expense(self, item):
-        uid = item.uid
-        rid = item.rid
-
         try:
-            self.rds_cur.execute("SELECT MAX(eid) FROM {} where uid=%s and rid=%s".format(self.rds_expense_table), (uid, rid))
+            self.rds_cur.execute("SELECT MAX(eid) FROM {} where uid=%s and rid=%s".format(self.rds_expense_table), (item.uid, item.rid))
             eid = self.rds_cur.fetchall()[0][0]
             self.rds_conn.commit()
             if eid is None:
                 eid = 0
 
-            fields = [uid, rid, int(eid) + 1]
+            fields = [item.uid, item.rid, int(eid) + 1]
             fields.append(item.date)
             fields.append(item.description)
             fields.append(item.category)
@@ -294,7 +280,7 @@ class Expenses:
         try:
             self.s3.meta.client.upload_file(item.file_path, self.s3_bucket, item.file_path.split('/')[2])
             os.remove(item.file_path)
-            self.rds_cur.execute("UPDATE {} SET image=%s where uid=%s AND rid=%s;".format(self.rds_report_table), (item.file_path.split('/')[2], item.uid, item.rid))
+            self.rds_cur.execute("UPDATE {} SET image=%s where uid=%s AND rid=%s;".format(self.rds_expense_table), (item.file_path.split('/')[2], item.uid, item.rid))
             self.rds_conn.commit()
         except Exception as e:
             print("ERROR: " + str(e), flush=True)

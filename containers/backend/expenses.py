@@ -171,7 +171,11 @@ def download_image():
             except:
                 pass
             return response
-        return flask.send_file(rc[1], rc[2].replace(':', '/'), as_attachment=True)
+        return flask.send_file(
+            rc[1],
+            rc[2].replace(':', '/'),
+            True,
+            item.image.split('.')[0] + '.' + img)
     return return_status(rc[0])
 
 @app.route('/file/delete', methods=['POST'])

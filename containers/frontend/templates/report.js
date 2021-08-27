@@ -38,6 +38,16 @@ function upload_image(new_id) {
 
 function download_image(new_id) {
     var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            var a = document.getElementById("download-link");
+            var blob = new Blob([xhr.response], {type: xhr.getResponseHeader("Content-Type")});
+            var url = window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = "file.img";
+            a.click();
+        }
+    }
     xhr.open("POST", "/api/v0/report/file/download")
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhr.send(JSON.stringify({

@@ -144,7 +144,7 @@ def upload_image():
 
     data = json.loads(flask.request.form.get('metadata'))
     file = flask.request.files['file']
-    file_path = '/tmp/' + uuid.uuid4().hex + '.' + file.content_type
+    file_path = '/tmp/' + uuid.uuid4().hex + '.' + file.content_type.replace('/', ':')
     file.save(file_path)
     item = expenses_service.ExpenseItem(app, data, file_path)
     if not item.validate_token():  return return_status(401)
@@ -171,7 +171,7 @@ def download_image():
             except:
                 pass
             return response
-        return flask.send_file(rc[1], rc[2], as_attachment=True)
+        return flask.send_file(rc[1], rc[2].replace(':', '/'), as_attachment=True)
     return return_status(rc[0])
 
 @app.route('/file/delete', methods=['POST'])

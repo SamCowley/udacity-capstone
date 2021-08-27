@@ -38,6 +38,19 @@ function upload_image(new_id) {
 
 function download_image(new_id) {
     var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var a;
+            a.id = "temporary-link"
+            a = document.createElement('a');
+            a.href = window.URL.createObjectURL(xhr.response);
+            a.download = "receipt";
+            a.style.display = "none";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    }
     xhr.open("POST", "/api/v0/report/file/download")
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhr.send(JSON.stringify({
